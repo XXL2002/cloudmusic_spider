@@ -1,6 +1,5 @@
 # 爬取相关数据
 
-import json
 import requests
 from utils import headers, city_dic, user_age
 
@@ -42,8 +41,6 @@ def get_user(user_id):
             else:
                 data['signature'] = content_json['profile']['signature'].replace("\n","").replace("\u200b", "")
 
-            print(data.values())
-
             return data
     
     except:
@@ -54,5 +51,5 @@ def get_user(user_id):
 
 if __name__ == "__main__":
 
-    # get_user(282451455)    # 获取指定用户的基本信息
-    get_user(507974556)
+    print(get_user(282451455).values())    # 获取指定用户的基本信息
+    # get_user(507974556)

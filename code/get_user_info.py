@@ -51,5 +51,7 @@ def get_user(user_id):
 
 if __name__ == "__main__":
 
-    print(get_user(282451455).values())    # 获取指定用户的基本信息
+    list = list(get_user(507974556).values())    # 获取指定用户的基本信息
+    str = ','.join([str(i) for i in list])
+    print(str)
     # get_user(507974556)

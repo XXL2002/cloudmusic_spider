@@ -4,10 +4,9 @@
 import requests
 import math
 import random
-from Crypto.Cipher import AES
 import codecs
 import base64
-from utils import headers
+from utils import headers, AESencrypt
 
 # 获取热评
 def hotcomments(html, songname, i, filepath): 
@@ -201,36 +200,6 @@ def generate_random_strs(length):
         i = i + 1
 
     return random_str
-
-
-# AES加密
-def AESencrypt(msg, key):
-
-    # 如果不是16的倍数则进行填充，计算需要填充的位数
-    padding = 16 - len(msg) % 16
-
-    # 这里使用padding对应的单字符进行填充
-    msg = msg + padding * chr(padding)
-
-    # 用来加密或者解密的初始向量(必须是16位)
-    iv = '0102030405060708'
-    
-    key=key.encode('utf-8')
-    iv=iv.encode('utf-8')
-    msg=msg.encode('utf-8')
-
-    cipher = AES.new(key, AES.MODE_CBC, iv)
-
-    # 加密后得到的是bytes类型的数据
-    encryptedbytes = cipher.encrypt(msg)
-
-    # 使用Base64进行编码,返回byte字符串
-    encodestrs = base64.b64encode(encryptedbytes)
-
-    # 对byte字符串按utf-8进行解码
-    enctext = encodestrs.decode('utf-8')
-
-    return enctext
 
 
 # RSA加密

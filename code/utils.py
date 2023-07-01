@@ -6,6 +6,7 @@ import base64
 import codecs
 import random
 import math
+import requests
 
 # 伪造请求头
 headers={'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,image/apng,*/*;q=0.8',
@@ -163,6 +164,23 @@ def get_params(page):
     return encText, encSecKey
 
 
+# get请求，返回json数据
+def get(url):
+
+    response = requests.get(url, headers=headers)
+    content_json = response.json()
+
+    try:
+        if content_json['code'] == 200:
+
+            response.close()
+            return content_json
+        
+    except:
+
+        print("爬取失败!")
+    
+    
 # 根据生日时间戳(ms)，计算出年龄
 def user_age(given_timestamp):
 

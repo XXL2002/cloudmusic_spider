@@ -5,14 +5,16 @@ from utils import headers, city_dic, json2str, user_age
 
 
 def get_user(user_id):
-    """
-    获取用户注册时间
-    """
     
+    """
+    根据用户ID获取用户基本信息
+    """
+
     data = {}
     url = 'https://music.163.com/api/v1/user/detail/' + str(user_id)
 
-    content_json = requests.get(url, headers=headers).json()
+    response = requests.get(url, headers=headers)
+    content_json = response.json()
 
     # 成功返回
     try:
@@ -41,6 +43,8 @@ def get_user(user_id):
                 data['signature'] = "无"
             else:
                 data['signature'] = content_json['profile']['signature'].replace("\n","").replace("\u200b", "")
+
+            response.close()
 
             return data
     

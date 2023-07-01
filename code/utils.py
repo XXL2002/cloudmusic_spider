@@ -1,6 +1,8 @@
 import time
 import datetime
 import openpyxl
+from Crypto.Cipher import AES
+import base64
 
 
 # 伪造请求头
@@ -51,6 +53,36 @@ city_dic = {
     640000: '宁夏回族自治区',
     650000: '新疆维吾尔自治区',
 }
+
+
+# AES加密
+def AESencrypt(msg, key):
+
+    # 如果不是16的倍数则进行填充，计算需要填充的位数
+    padding = 16 - len(msg) % 16
+
+    # 这里使用padding对应的单字符进行填充
+    msg = msg + padding * chr(padding)
+
+    # 用来加密或者解密的初始向量(必须是16位)
+    iv = '0102030405060708'
+    
+    key=key.encode('utf-8')
+    iv=iv.encode('utf-8')
+    msg=msg.encode('utf-8')
+
+    cipher = AES.new(key, AES.MODE_CBC, iv)
+
+    # 加密后得到的是bytes类型的数据
+    encryptedbytes = cipher.encrypt(msg)
+
+    # 使用Base64进行编码,返回byte字符串
+    encodestrs = base64.b64encode(encryptedbytes)
+
+    # 对byte字符串按utf-8进行解码
+    enctext = encodestrs.decode('utf-8')
+
+    return enctext
 
 
 # 根据生日时间戳(ms)，计算出年龄

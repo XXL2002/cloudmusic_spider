@@ -1,0 +1,58 @@
+# 爬取相关数据
+
+import json
+from urllib import request
+from utils import headers, city_dic, user_age
+
+
+def get_user(user_id):
+    """
+    获取用户注册时间
+    """
+    data = {}
+    url = 'https://music.163.com/api/v1/user/detail/' + str(user_id)
+
+    req = request.Request(url, headers=headers)  #使用request封装url和头部信息
+    response = request.urlopen(req)     # 请求页面
+
+    # 将页面数据转为json格式
+    content_json = json.loads(response.read().decode("utf-8"))
+
+    # 成功返回
+    try:
+
+        if content_json['code'] == 200:
+
+            # 性别
+            if content_json['profile']['gender'] == 1:
+                data['gender'] = '男'
+            elif content_json['profile']['gender'] == 2:
+                data['gender'] = '女'
+            else:
+                data['gender'] = '未知'
+
+            # 年龄
+            if content_json['profile']['birthday'] < 0:     # 时间戳小于0，该用户未填年龄
+                data['age'] = -1
+            else: 
+                data['age'] = user_age(content_json['profile']['birthday'])
+
+            # 省份
+            data['province'] = city_dic[content_json['profile']['province']]
+
+            # 个人介绍
+            data['signature'] = content_json['profile']['signature']
+
+            print(data.values())
+
+            return data
+        
+    except:
+
+        print("爬取失败!")
+        
+
+
+if __name__ == "__main__":
+
+    get_user(507974556)    # 获取指定用户的基本信息

@@ -18,6 +18,7 @@ headers={'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/
 
 # 城市字典
 city_dic = {
+    0: '未知',
     110000: '北京市',
     120000: '天津市',
     130000: '河北省',

@@ -1,7 +1,7 @@
 # 爬取相关数据
 
 import json
-from urllib import request
+import requests
 from utils import headers, city_dic, user_age
 
 
@@ -12,11 +12,7 @@ def get_user(user_id):
     data = {}
     url = 'https://music.163.com/api/v1/user/detail/' + str(user_id)
 
-    req = request.Request(url, headers=headers)  #使用request封装url和头部信息
-    response = request.urlopen(req)     # 请求页面
-
-    # 将页面数据转为json格式
-    content_json = json.loads(response.read().decode("utf-8"))
+    content_json = requests.get(url, headers=headers).json()
 
     # 成功返回
     try:
@@ -41,12 +37,15 @@ def get_user(user_id):
             data['province'] = city_dic[content_json['profile']['province']]
 
             # 个人介绍
-            data['signature'] = content_json['profile']['signature']
+            if content_json['profile']['signature'] == "":
+                data['signature'] = "无"
+            else:
+                data['signature'] = content_json['profile']['signature'].replace("\n"," ")
 
             print(data.values())
 
             return data
-        
+    
     except:
 
         print("爬取失败!")
@@ -55,4 +54,5 @@ def get_user(user_id):
 
 if __name__ == "__main__":
 
-    get_user(507974556)    # 获取指定用户的基本信息
+    # get_user(282451455)    # 获取指定用户的基本信息
+    get_user(507974556)

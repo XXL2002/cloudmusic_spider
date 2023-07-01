@@ -1,0 +1,103 @@
+{
+    "identify": {
+      "imageUrl": "https://p6.music.126.net/obj/wonDlsKUwrLClGjCm8Kx/11231827456/4f57/212d/6f78/c01bf6ac1b0228d8f365e13b6deea630.png",
+      "imageDesc": "资深合伙人",
+      "actionUrl": "orpheus://miniProgram?appId=605ab15bcc23b01f8e8a2dfb&pageId=partner/index&fallbackURL=https%3A%2F%2Fmp.music.163.com%2F605ab15bcc23b01f8e8a2dfb%2Fpartner%2Findex.html%3Fuid%3D1839927448&query=uid%3D1839927448"
+    },
+    "level": 8,
+    "listenSongs": 5512,
+    "userPoint": {
+      "userId": 1839927448,
+      "balance": 3695,
+      "updateTime": 1688110419885,
+      "version": 10,
+      "status": 0,
+      "blockBalance": 0
+    },
+    "mobileSign": false,
+    "pcSign": false,
+    "profile": {
+      "privacyItemUnlimit": {
+        "area": true,
+        "college": true,
+        "gender": true,
+        "age": true,
+        "villageAge": false
+      },
+      "avatarDetail": {
+        "userType": null,
+        "identityLevel": null,
+        "identityIconUrl": "https://p6.music.126.net/obj/wonDlsKUwrLClGjCm8Kx/11231827456/4f57/212d/6f78/c01bf6ac1b0228d8f365e13b6deea630.png"
+      },
+      "avatarImgIdStr": "109951168696580142",
+      "backgroundImgIdStr": "109951166589460443",
+      "vipType": 11,
+      "mutual": false,
+      "remarkName": null,
+      "avatarImgId": 109951168696580142,
+      "province": 320000,
+      "city": 321300,
+      "gender": 2,
+      "nickname": "-夜色曾沁凉-",
+      "avatarUrl": "http://p1.music.126.net/SsAHvrjmESgkC3viBaFIeQ==/109951168696580142.jpg",
+      "backgroundImgId": 109951166589460443,
+      "backgroundUrl": "http://p1.music.126.net/bU7qJRObAts5aKjgJri9Bw==/109951166589460443.jpg",
+      "userType": 310,
+      "birthday": 1045324800000,
+      "defaultAvatar": false,
+      "followed": false,
+      "accountStatus": 0,
+      "djStatus": 10,
+      "experts": {
+        
+      },
+      "expertTags": null,
+      "authStatus": 0,
+      "detailDescription": "",
+      "userId": 1839927448,
+      "createTime": -1,
+      "description": "",
+      "signature": "",
+      "authority": 0,
+      "allAuthTypes": [
+        {
+          "type": 310,
+          "desc": "资深合伙人",
+          "tags": null
+        }
+      ],
+      "followeds": 18,
+      "follows": 136,
+      "blacklist": false,
+      "eventCount": 71,
+      "allSubscribedCount": 0,
+      "playlistBeSubscribedCount": 0,
+      "mainAuthType": {
+        "type": 310,
+        "desc": "资深合伙人",
+        "tags": null
+      },
+      "avatarImgId_str": "109951168696580142",
+      "followTime": null,
+      "followMe": false,
+      "artistIdentity": [
+        
+      ],
+      "cCount": 0,
+      "inBlacklist": false,
+      "sDJPCount": 0,
+      "playlistCount": 5,
+      "sCount": 0,
+      "newFollows": 136
+    },
+    "peopleCanSeeMyPlayRecord": false,
+    "bindings": [
+      
+    ],
+    "adValid": false,
+    "code": 200,
+    "newUser": false,
+    "recallUser": false,
+    "createTime": -1,
+    "createDays": 1522
+  }

@@ -1,0 +1,87 @@
+{
+    "level": 9,
+    "listenSongs": 16667,
+    "userPoint": {
+      "userId": 473975415,
+      "balance": 1318,
+      "updateTime": 1688109911208,
+      "version": 10,
+      "status": 0,
+      "blockBalance": 204
+    },
+    "mobileSign": false,
+    "pcSign": false,
+    "profile": {
+      "privacyItemUnlimit": {
+        "area": false,
+        "college": false,
+        "gender": true,
+        "age": false,
+        "villageAge": false
+      },
+      "avatarDetail": null,
+      "accountStatus": 0,
+      "userType": 0,
+      "gender": 0,
+      "avatarImgId": 109951168666775096,
+      "followed": false,
+      "authStatus": 0,
+      "detailDescription": "",
+      "experts": {
+        
+      },
+      "expertTags": null,
+      "djStatus": 0,
+      "province": 0,
+      "city": 100,
+      "defaultAvatar": false,
+      "backgroundImgId": 109951162868128395,
+      "backgroundUrl": "http://p1.music.126.net/2zSNIqTcpHL2jIvU6hG0EA==/109951162868128395.jpg",
+      "birthday": -2209017600000,
+      "nickname": "时间不停走",
+      "avatarUrl": "http://p1.music.126.net/Ts1Rq3h6KkXs6iV1TP4NUA==/109951168666775096.jpg",
+      "avatarImgIdStr": "109951168666775096",
+      "backgroundImgIdStr": "109951162868128395",
+      "userId": 473975415,
+      "createTime": -1,
+      "vipType": 11,
+      "mutual": false,
+      "remarkName": null,
+      "description": "",
+      "signature": "But the waves won’t break my boat.",
+      "authority": 0,
+      "followeds": 11,
+      "follows": 396,
+      "blacklist": false,
+      "eventCount": 4,
+      "allSubscribedCount": 0,
+      "playlistBeSubscribedCount": 3,
+      "avatarImgId_str": "109951168666775096",
+      "followTime": null,
+      "followMe": false,
+      "artistIdentity": [
+        
+      ],
+      "cCount": 0,
+      "inBlacklist": false,
+      "sDJPCount": 0,
+      "playlistCount": 14,
+      "sCount": 0,
+      "newFollows": 396
+    },
+    "peopleCanSeeMyPlayRecord": false,
+    "bindings": [
+      
+    ],
+    "adValid": false,
+    "code": 200,
+    "newUser": false,
+    "recallUser": false,
+    "createTime": -1,
+    "createDays": 2257,
+    "profileVillageInfo": {
+      "title": "领取村民证",
+      "imageUrl": null,
+      "targetUrl": "https://sg.music.163.com/g/cloud-card-2?nm_style=sbt&market=personal"
+    }
+  }

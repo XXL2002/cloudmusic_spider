@@ -5,6 +5,8 @@ import requests
 
 # 伪造请求头
 headers={'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,image/apng,*/*;q=0.8',
+            # 'Origin': 'https://music.163.com',
+            # 'Referer': 'https://music.163.com/playlist?id=750115024',
             'Accept-Encoding': 'gzip, deflate',
             'Accept-Language': 'zh-CN,zh;q=0.9',
             'Connection': 'keep-alive',

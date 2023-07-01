@@ -102,7 +102,6 @@ def comments(content_json, songname, i, filepath):
         j += 1
 
 
-
 def get_song_comments(songname, songid, filepath):
 
     with open(filepath, 'a', encoding='utf-8') as file:

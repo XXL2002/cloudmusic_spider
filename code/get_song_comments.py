@@ -1,9 +1,8 @@
 #! /usr/bin/env python
 # coding='utf-8'
 
-import requests
 import math
-from utils import headers, json2str, get_params, save_csv
+from utils import get, save_csv
 
 # 获取热评
 def hotcomments(content_json, songname, i, filepath): 
@@ -52,7 +51,7 @@ def hotcomments(content_json, songname, i, filepath):
                 data['location'] = item['ipLocation']['location']
 
             save_csv(filepath, data)
-            
+
             m += 1
 
 
@@ -103,23 +102,6 @@ def comments(content_json, songname, i, filepath):
         j += 1
 
 
-# 返回url对应的内容
-def get_comments(url, data):
-
-    try:
-        
-        r = requests.post(url, headers=headers, data=data)
-        r.encoding = "utf-8"
-
-        # 成功返回，转换为json格式
-        if r.status_code == 200:
-            return r.json()
-        
-    except:
-
-        print("爬取失败!")
-
-
 
 def get_song_comments(songname, songid, filepath):
 
@@ -128,13 +110,12 @@ def get_song_comments(songname, songid, filepath):
 
     print('开始爬取!')
 
-    page = 1    # 第一页
-    params, encSecKey = get_params(page)    # 评论请求参数
-    url = 'https://music.163.com/weapi/v1/resource/comments/R_SO_4_' + str(songid) + '?csrf_token='
-    data = {'params': params, 'encSecKey': encSecKey}
+    page = 0    # 第一页
     
+    url = f'https://music.163.com/api/v1/resource/comments/R_SO_4_{songid}?limit=20&offset={page}'
+
     # 获取第一页评论，json格式
-    content_json = get_comments(url, data)
+    content_json = get(url)
 
     # 评论总数
     total = content_json['total']
@@ -148,14 +129,13 @@ def get_song_comments(songname, songid, filepath):
     comments(content_json, songname, page, filepath)
 
     # 开始获取歌曲的全部评论
-    page = 2
+    page = 1
 
     # 取50个页
-    while page <= 50:
+    while page < 50:
 
-        params, encSecKey = get_params(page)
-        data = {'params': params, 'encSecKey': encSecKey}
-        content_json = get_comments(url, data)
+        url = f'https://music.163.com/api/v1/resource/comments/R_SO_4_{songid}?limit=20&offset={page}'
+        content_json = get(url)
 
         # 从第二页开始获取评论
         comments(content_json, songname, page, filepath)

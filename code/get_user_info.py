@@ -1,13 +1,14 @@
 # 爬取相关数据
 
 import requests
-from utils import headers, city_dic, user_age
+from utils import headers, city_dic, json2str, user_age
 
 
 def get_user(user_id):
     """
     获取用户注册时间
     """
+    
     data = {}
     url = 'https://music.163.com/api/v1/user/detail/' + str(user_id)
 
@@ -51,7 +52,5 @@ def get_user(user_id):
 
 if __name__ == "__main__":
 
-    list = list(get_user(507974556).values())    # 获取指定用户的基本信息
-    str = ','.join([str(i) for i in list])
-    print(str)
-    # get_user(507974556)
+    data = get_user(507974556)    # 获取指定用户的基本信息
+    print(json2str(data))

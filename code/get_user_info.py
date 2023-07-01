@@ -40,7 +40,7 @@ def get_user(user_id):
             if content_json['profile']['signature'] == "":
                 data['signature'] = "无"
             else:
-                data['signature'] = content_json['profile']['signature'].replace("\n"," ")
+                data['signature'] = content_json['profile']['signature'].replace("\n","").replace("\u200b", "")
 
             print(data.values())
 

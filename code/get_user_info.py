@@ -14,6 +14,9 @@ def get_user(user_id):
 
     content_json = get(url)
 
+    # 用户名
+    data['nickname'] = content_json['profile']['nickname']
+
     # 性别
     if content_json['profile']['gender'] == 1:
         data['gender'] = '男'
@@ -44,5 +47,5 @@ def get_user(user_id):
 
 if __name__ == "__main__":
 
-    data = get_user(507974556)    # 获取指定用户的基本信息
-    print(json2str(data))
+    data = get_user(31475897)    # 获取指定用户的基本信息
+    print(data)

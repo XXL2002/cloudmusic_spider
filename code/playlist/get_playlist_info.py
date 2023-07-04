@@ -43,7 +43,7 @@ def get_playlist_info(playlistid):
 
     save_csv(file_info_paths['playlist'], data)
     
-    return data['trackIds']
+    return ids
         
 
 

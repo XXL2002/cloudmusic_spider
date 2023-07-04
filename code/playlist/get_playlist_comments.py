@@ -63,6 +63,4 @@ def get_playlist_comments(playlistid):
 
 if __name__ == "__main__":
 
-    # filename = "playlist_comments"
-    # filepath = f"data\{filename}.txt"
-    get_playlist_comments(2105681544)
+    get_playlist_comments(19723756)

@@ -4,6 +4,10 @@ import time
 import datetime
 
 
+def list2str(list):
+    return ' '.join([str(i) for i in list])
+
+
 # 根据生日时间戳(ms)，计算出年龄
 def user_age(given_timestamp):
 

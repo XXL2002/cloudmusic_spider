@@ -17,13 +17,13 @@ def get_singer_info(singer_id):
     data = {}
     content_json = get(url)
 
-    # 获取歌手名称
-    data['name'] = content_json['artist']['name']
-
     # 获取歌手用户id
-    data['user_id'] = content_json['artist']['accountId']
+    data['singer_id'] = content_json['artist']['accountId']
+
+    # 获取歌手名称
+    data['singer_name'] = content_json['artist']['name']
     
-    url = 'https://music.163.com/api/v1/user/detail/' + str(data['user_id'])
+    url = 'https://music.163.com/api/v1/user/detail/' + str(data['singer_id'])
     content_json1 = get(url)
 
     # 获取歌手粉丝

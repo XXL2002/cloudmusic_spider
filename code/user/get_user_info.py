@@ -55,12 +55,13 @@ def get_user_info(user_id):
     data['all_rank'] = list2str(alldatalist)
     data['week_rank'] = list2str(weeklist)
     
-    for i in range(0,len(alldatalist)):
-        get_song_info(alldatalist[i])
-        get_song_comments(alldatalist[i])
-    for i in range(0,len(weeklist)):
-        get_song_info(weeklist[i])
-        get_song_comments(weeklist[i])
+    for song_id in alldatalist:
+        get_song_info(song_id)
+        get_song_comments(song_id)
+
+    for song_id in weeklist:
+        get_song_info(song_id)
+        get_song_comments(song_id)
 
     # 获取用户创建和收藏的歌单
     create_playlists, collect_playlists = get_user_playlist(data['nickname'], user_id)

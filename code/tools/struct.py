@@ -109,3 +109,20 @@ Music_charts = {
     '黑胶VIP爱搜榜':7785091694,
     '实时热度榜':8246775932
 }
+
+
+# 文件头
+file_headers = {
+    'song': ["songname", "songer", "singer_id", "album", "lyric"],
+    'singer': ["singer_id", "singer_name", "fans", "hotsongs"],
+    'playlist': ["playlist_id", "playlist_name", "playCount", "subscribedCount", "description", "tags", "creator", "trackIds"],
+    'comment': ["user_id", "user_name", "comment_id", "comment", "time", "likecount", "location"]
+}
+
+
+# 文件路径
+file_info_paths = {
+    'song': r'data\song_info.txt',
+    'singer': r'data\singer_info.txt',
+    'playlist': r'data\playlist_info.txt'
+}

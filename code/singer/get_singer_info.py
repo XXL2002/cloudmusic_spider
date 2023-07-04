@@ -17,27 +17,33 @@ def get_singer_info(singer_id):
     content_json = get(url)
 
     # 获取歌手用户id
-    data['singer_id'] = content_json['artist']['accountId']
+    data['singer_id'] = singer_id
 
     # 获取歌手名称
     data['singer_name'] = content_json['artist']['name']
     
-    url = 'https://music.163.com/api/v1/user/detail/' + str(data['singer_id'])
+    url = 'https://music.163.com/api/v1/user/detail/' + str(singer_id)
     content_json1 = get(url)
 
-    # 获取歌手粉丝
-    data['fans'] = content_json1['profile']['followeds']
+    if 'accountId' in content_json['artist']:
 
+        # 获取歌手粉丝
+        data['fans'] = content_json1['profile']['followeds']
+
+    else:
+        data['fans'] = 0
+        
     # 获取歌手热门歌曲id
     hotSongs = [hotSong['id'] for hotSong in content_json['hotSongs']]
     data['hotsongs'] = list2str(hotSongs)
 
     save_csv(file_info_paths['singer'], data)
 
-    # return
+    return data
 
 if __name__=="__main__":
 
-    get_singer_info(10559)
+    data = get_singer_info(51849113)
+    print(data)
 
 

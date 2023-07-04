@@ -2,6 +2,8 @@ import sys
 sys.path.append("code")
 
 from tools.file import save_csv
+from user.get_user_info import get_user_info
+
 
 # 从json中提取热评
 def hotcomments(content_json, filepath): 
@@ -48,6 +50,8 @@ def hotcomments(content_json, filepath):
 
             save_csv(filepath, data)
 
+            get_user_info(data['user_id'])  # 爬取用户信息
+
             m += 1
 
 
@@ -93,5 +97,7 @@ def comments(content_json, filepath):
 
 
         save_csv(filepath, data)
+
+        get_user_info(data['user_id'])  # 爬取用户信息
 
         j += 1

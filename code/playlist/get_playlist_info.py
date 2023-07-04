@@ -38,7 +38,7 @@ def get_playlist_info(playlistid):
     data['creator'] = content_json['playlist']['creator']['userId']
     
     # 歌曲id列表
-    data['trackIds'] = [str(track['id']) for track in content_json['playlist']['trackIds']]
+    data['trackIds'] = [track['id'] for track in content_json['playlist']['trackIds']]
 
     save_csv(file_info_paths['playlist'], data)
     

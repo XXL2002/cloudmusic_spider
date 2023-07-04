@@ -15,6 +15,7 @@ if __name__=="__main__":
     add_header(file_info_paths['playlist'], file_headers['playlist'])
     add_header(file_info_paths['song'], file_headers['song'])
     add_header(file_info_paths['singer'], file_headers['singer'])
+    add_header(file_info_paths['user'], file_headers['user'])
     
     for chart_id in Music_charts.values():   # 遍历每个排行榜
 

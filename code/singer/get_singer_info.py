@@ -17,12 +17,12 @@ def get_singer_info(singer_id):
     content_json = get(url)
 
     # 获取歌手用户id
-    data['singer_id'] = singer_id
+    data['singer_id'] = content_json['artist']['accountId']
 
     # 获取歌手名称
     data['singer_name'] = content_json['artist']['name']
     
-    url = 'https://music.163.com/api/v1/user/detail/' + str(singer_id)
+    url = 'https://music.163.com/api/v1/user/detail/' + str(data['singer_id'])
     content_json1 = get(url)
 
     if 'accountId' in content_json['artist']:
@@ -32,7 +32,7 @@ def get_singer_info(singer_id):
 
     else:
         data['fans'] = 0
-        
+
     # 获取歌手热门歌曲id
     hotSongs = [hotSong['id'] for hotSong in content_json['hotSongs']]
     data['hotsongs'] = list2str(hotSongs)

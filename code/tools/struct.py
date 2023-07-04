@@ -116,13 +116,15 @@ file_headers = {
     'song': ["songname", "songer", "singer_id", "album", "lyric"],
     'singer': ["singer_id", "singer_name", "fans", "hotsongs"],
     'playlist': ["playlist_id", "playlist_name", "playCount", "subscribedCount", "description", "tags", "creator", "trackIds"],
-    'comment': ["user_id", "user_name", "comment_id", "comment", "time", "likecount", "location"]
+    'comment': ["user_id", "user_name", "comment_id", "comment", "time", "likecount", "location"],
+    'user': ["nickname", "gender", "age", "province", "signature"]
 }
 
 
 # 文件路径
 file_info_paths = {
-    'song': r'data\song_info.txt',
-    'singer': r'data\singer_info.txt',
-    'playlist': r'data\playlist_info.txt'
+    'song': r'data\info\song_info.txt',
+    'singer': r'data\info\singer_info.txt',
+    'playlist': r'data\info\playlist_info.txt',
+    'user': r'data\info\user_info.txt'
 }

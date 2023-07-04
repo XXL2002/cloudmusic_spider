@@ -38,6 +38,6 @@ if __name__=="__main__":
         for i in range(0,len(users)):
             
             get_user_info(users[i])
-            if ((i+1) % 100 == 0 or i ==len(users)-1):
+            if ((i+1) % 10 == 0 or i ==len(users)-1):
                 progress_bar(i+1,len(users))
                 sleep()

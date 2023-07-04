@@ -44,10 +44,10 @@ def get_playlist_comments(playlistid):
     # 开始获取歌曲的全部评论
     page = 1
 
-    # 爬取前75页评论
-    while page < pages and page < 50:
+    # 爬取前5页评论
+    while page < pages and page < 5:
         if(page == 1):
-            progress_bar(page,min(pages,50))
+            progress_bar(page,min(pages,5))
 
         url = f'https://music.163.com/api/v1/resource/comments/A_PL_0_{playlistid}?limit=20&offset={page}'
         content_json = get(url)
@@ -56,8 +56,8 @@ def get_playlist_comments(playlistid):
         users += comments(content_json, filepath)
         page += 1
         
-        if ((page+1) % 5 == 0 or page ==min(pages,50)-1):
-            progress_bar(page+1,min(pages,50))
+        if ((page+1) % 5 == 0 or page ==min(pages,5)-1):
+            progress_bar(page+1,min(pages,5))
         sleep()
     
     print("爬取结束!")

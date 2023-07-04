@@ -45,10 +45,10 @@ def get_song_comments(songid):
     # 开始获取歌曲的全部评论
     page = 1
 
-    # 取50个页
-    while page < pages and page < 50:
+    # 取5个页
+    while page < pages and page < 5:
         if(page == 1):
-            progress_bar(page,min(pages,50))
+            progress_bar(page,min(pages,5))
             
         url = f'https://music.163.com/api/v1/resource/comments/R_SO_4_{songid}?limit=20&offset={page}'
         content_json = get(url)
@@ -57,8 +57,8 @@ def get_song_comments(songid):
         users += comments(content_json, filepath)
         page += 1
 
-        if ((page+1) % 5 == 0 or page ==min(pages,50)-1):
-            progress_bar(page+1,min(pages,50))
+        if ((page+1) % 5 == 0 or page ==min(pages,5)-1):
+            progress_bar(page+1,min(pages,5))
         sleep()
     
     print("爬取结束!")

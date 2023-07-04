@@ -26,18 +26,22 @@ if __name__=="__main__":
 
         users = get_playlist_comments(chart_id)     # 爬取排行榜的评论
 
-        for song_id in trackIds:  # 遍历该排行榜中的所有歌曲
+        for i in range(0,len(trackIds)):  # 遍历该排行榜中的所有歌曲
             
-            singer_id = get_song_info(song_id)   # 爬取歌曲基本信息
+            print(f"\t\t单曲idx:{i+1}/{len(trackIds)}")
+            
+            singer_id = get_song_info(trackIds[i])   # 爬取歌曲基本信息
 
             get_singer_info(singer_id)           # 爬取歌手基本信息
 
-            users += get_song_comments(song_id)           # 爬取歌曲评论
-            
+            users += get_song_comments(trackIds[i])           # 爬取歌曲评论
+        
+        # Light只取20个用户
+        users = users[0:20]
         print("\t正在爬取与本排行榜相关的用户信息...")
         for i in range(0,len(users)):
             
             get_user_info(users[i])
-            if ((i+1) % 100 == 0 or i ==len(users)-1):
+            if ((i+1) % 10 == 0 or i ==len(users)-1):
                 progress_bar(i+1,len(users))
                 sleep()

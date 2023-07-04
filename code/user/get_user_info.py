@@ -55,6 +55,13 @@ def get_user_info(user_id):
     data['all_rank'] = list2str(alldatalist)
     data['week_rank'] = list2str(weeklist)
     
+    # 获取用户创建和收藏的歌单
+    create_playlists, collect_playlists = get_user_playlist(data['nickname'], user_id)
+    data['create_play'] = list2str(create_playlists)
+    data['collect_play'] = list2str(collect_playlists)
+
+    save_csv(file_info_paths['user'], data)
+    
     for song_id in alldatalist:
         get_song_info(song_id)
         get_song_comments(song_id)
@@ -63,12 +70,6 @@ def get_user_info(user_id):
         get_song_info(song_id)
         get_song_comments(song_id)
 
-    # 获取用户创建和收藏的歌单
-    create_playlists, collect_playlists = get_user_playlist(data['nickname'], user_id)
-    data['create_play'] = list2str(create_playlists)
-    data['collect_play'] = list2str(collect_playlists)
-
-    save_csv(file_info_paths['user'], data)
 
     # return data
     

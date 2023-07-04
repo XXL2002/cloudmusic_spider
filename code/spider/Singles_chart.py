@@ -41,7 +41,7 @@ if __name__=="__main__":
             users += get_song_comments(trackIds[i])           # 爬取歌曲评论
         
         # Light只取20个用户
-        users = users[0:20]
+        users = list(set(users[0:20]))
         print("\t正在爬取与本排行榜相关的用户信息...")
         for i in range(0,len(users)):
             

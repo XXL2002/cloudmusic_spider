@@ -24,8 +24,23 @@ def get_song_lyric(songid):
     lyric = re.sub(pattern3, "", lyric)
     pattern4 = r'制作人\s*:\s*\w+\s*'
     lyric = re.sub(pattern4, "", lyric)
-    pattern4 = r'编曲\s*:\s*\w+\s*'
-    lyric = re.sub(pattern4, "", lyric)
+    pattern5 = r'编曲\s*:\s*\w+\s*'
+    lyric = re.sub(pattern5, "", lyric)
+
+    # pattern6 = r'配唱编写\s*:\s*\w+\s*'
+    # lyric = re.sub(pattern6, "", lyric)
+
+    # pattern7 = r'吉他\s*:\s*\w+\s*'
+    # lyric = re.sub(pattern7, "", lyric)
+
+    # pattern8 = r'吉他录音\s*:\s*\w+\s*'
+    # lyric = re.sub(pattern8, "", lyric)
+
+    # pattern9 = r'贝斯\s*:\s*\w+\s*'
+    # lyric = re.sub(pattern9, "", lyric)
+
+    # pattern10 = r'贝斯\s*:\s*\w+\s*'
+    # lyric = re.sub(pattern10, "", lyric)
 
     return lyric
 

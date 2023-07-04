@@ -43,7 +43,7 @@ def get_playlist_info(playlistid):
 
     save_csv(file_info_paths['playlist'], data)
     
-    return ids
+    return ids[0:10]    # 只分析前十首歌
         
 
 

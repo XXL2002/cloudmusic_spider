@@ -8,6 +8,9 @@ from tools.utils import user_age
 from tools.request import get
 from tools.struct import file_info_paths
 from tools.file import save_csv
+from user.get_user_listen_rank import get_user_listen_rank
+from user.get_user_playlist import get_user_playlist
+from tools.utils import list2str
 
 def get_user_info(user_id):
     '''
@@ -45,10 +48,20 @@ def get_user_info(user_id):
     else:
         data['signature'] = content_json['profile']['signature'].replace("\n","").replace("\u200b", "")
 
+    # 获取用户近一周听歌排行(10首)
+    alldatalist, weeklist = get_user_listen_rank(user_id)
+    data['all_rank'] = list2str(alldatalist)
+    data['week_rank'] = list2str(weeklist)
+
+    # 获取用户创建和收藏的歌单
+    create_playlists, collect_playlists = get_user_playlist(data['nickname'], user_id)
+    data['create_play'] = list2str(create_playlists)
+    data['collect_play'] = list2str(collect_playlists)
+
     save_csv(file_info_paths['user'], data)
 
     return data
-        
+    
 
 
 if __name__ == "__main__":

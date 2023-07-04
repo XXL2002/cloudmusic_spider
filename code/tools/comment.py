@@ -2,7 +2,7 @@ import sys
 sys.path.append("code")
 
 from tools.file import save_csv
-from user.get_user_info import get_user_info
+# from user.get_user_info import get_user_info
 
 
 # 从json中提取热评

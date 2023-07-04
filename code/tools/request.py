@@ -2,13 +2,13 @@ import sys
 sys.path.append("code")
 
 import requests
-from tools.struct import headers
+from tools.struct import get_header
 
 
 # get请求，返回json数据
 def get(url):
 
-    response = requests.get(url, headers=headers)
+    response = requests.get(url, headers=get_header())
     content_json = response.json()
 
     try:
@@ -25,7 +25,7 @@ def get(url):
 # post请求
 def post(url, data):
 
-    response = requests.post(url, headers=headers, data=data)
+    response = requests.post(url, headers=get_header(), data=data)
     content_json = response.json()
 
     try:

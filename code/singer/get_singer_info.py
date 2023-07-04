@@ -18,7 +18,8 @@ def get_singer_info(singer_id):
 
     # 歌手ID
     data['singer_id'] = singer_id
-
+    
+    # accountId存在时有歌手个人主页
     if 'accountId' in content_json['artist']:
 
         # 获取歌手用户id

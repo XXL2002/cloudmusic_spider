@@ -1,6 +1,5 @@
 import sys
 sys.path.append("code")
-
 from tools.struct import Music_charts, file_headers, file_info_paths
 from tools.file import add_header
 from playlist.get_playlist_info import get_playlist_info
@@ -11,15 +10,20 @@ from singer.get_singer_info import get_singer_info
 from user.get_user_info import get_user_info
 from tools.progressBar import progress_bar
 from tools.sleep import sleep
-
+from tools.file import cleardir
 
 if __name__=="__main__":
     
+    cleardir(r'data\info')
+    cleardir(r'data\song_comments')
+    cleardir(r'data\playlist_comments')
+
     add_header(file_info_paths['playlist'], file_headers['playlist'])
     add_header(file_info_paths['song'], file_headers['song'])
     add_header(file_info_paths['singer'], file_headers['singer'])
     add_header(file_info_paths['user'], file_headers['user'])
     
+
     for chart_id in Music_charts.values():   # 遍历每个排行榜
 
         trackIds = get_playlist_info(chart_id)     # 爬取排行榜的基本信息

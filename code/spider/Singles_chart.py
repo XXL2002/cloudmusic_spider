@@ -34,10 +34,10 @@ if __name__=="__main__":
 
             users += get_song_comments(song_id)           # 爬取歌曲评论
             
-            print("正在爬取与本排行榜相关的用户信息...")
-            for i in range(0,len(users)):
-                
-                get_user_info(users[i])
-                if ((i+1) % 100 == 0 or i ==len(users)-1):
-                    progress_bar(i+1,len(users))
-                    sleep()
+        print("\t正在爬取与本排行榜相关的用户信息...")
+        for i in range(0,len(users)):
+            
+            get_user_info(users[i])
+            if ((i+1) % 100 == 0 or i ==len(users)-1):
+                progress_bar(i+1,len(users))
+                sleep()

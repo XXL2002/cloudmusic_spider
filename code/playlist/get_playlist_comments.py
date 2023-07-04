@@ -20,7 +20,7 @@ def get_playlist_comments(playlistid):
 
     add_header(filepath, file_headers['comment'])
 
-    print(f'开始爬取!==>{filename}')
+    print(f'\t开始爬取歌单评论!==>{filename}')
 
     page = 0    # 第一页
     
@@ -35,7 +35,7 @@ def get_playlist_comments(playlistid):
     # 总页数
     pages = math.ceil(total / 20)
 
-    print("总共有{}页{}条评论\n".format(pages, total))
+    print("\t总共有{}页{}条评论\n".format(pages, total))
 
     users = []
     users += hotcomments(content_json, filepath)

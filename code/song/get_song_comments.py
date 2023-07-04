@@ -21,7 +21,7 @@ def get_song_comments(songid):
     
     add_header(filepath, file_headers['comment'])
 
-    print(f'开始爬取!==>{filename}')
+    print(f'\t\t开始爬取单曲评论!==>{filename}')
 
     page = 0    # 第一页
     
@@ -36,7 +36,7 @@ def get_song_comments(songid):
     # 总页数
     pages = math.ceil(total / 20)
 
-    print("总共有{}页{}条评论\n".format(pages, total))
+    print("\t\t总共有{}页{}条评论\n".format(pages, total))
 
     users = []
     users += hotcomments(content_json, filepath)

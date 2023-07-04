@@ -10,7 +10,7 @@ def get_playlist_info(playlistid):
     '''
         获取指定歌单的基本信息
     '''
-    
+    print(f"开始爬取歌单{playlistid}的详细信息...")
     data = {}
     url = f'https://music.163.com/api/v1/playlist/detail?id={playlistid}'
 

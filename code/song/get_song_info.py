@@ -12,7 +12,7 @@ def get_song_info(songid):
     '''
         获取歌曲基本信息
     '''
-    
+    print(f"\t\t开始爬取单曲{songid}的详细信息...")
     url = f'https://music.163.com/api/song/detail/?id={songid}&ids=[{songid}]'
     content_json = get(url)
     

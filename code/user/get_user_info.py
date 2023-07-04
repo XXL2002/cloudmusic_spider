@@ -11,6 +11,8 @@ from tools.file import save_csv
 from user.get_user_listen_rank import get_user_listen_rank
 from user.get_user_playlist import get_user_playlist
 from tools.utils import list2str
+from song.get_song_info import get_song_info
+from song.get_song_comments import get_song_comments
 
 def get_user_info(user_id):
     '''
@@ -52,6 +54,13 @@ def get_user_info(user_id):
     alldatalist, weeklist = get_user_listen_rank(user_id)
     data['all_rank'] = list2str(alldatalist)
     data['week_rank'] = list2str(weeklist)
+    
+    for i in range(0,len(alldatalist)):
+        get_song_info(alldatalist[i])
+        get_song_comments(alldatalist[i])
+    for i in range(0,len(weeklist)):
+        get_song_info(weeklist[i])
+        get_song_comments(weeklist[i])
 
     # 获取用户创建和收藏的歌单
     create_playlists, collect_playlists = get_user_playlist(data['nickname'], user_id)

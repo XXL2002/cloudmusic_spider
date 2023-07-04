@@ -38,27 +38,31 @@ def get_song_comments(songid):
 
     print("总共有{}页{}条评论\n".format(pages, total))
 
-    hotcomments(content_json, filepath)
-    comments(content_json, filepath)
+    users = []
+    users += hotcomments(content_json, filepath)
+    users += comments(content_json, filepath)
 
     # 开始获取歌曲的全部评论
     page = 1
 
     # 取50个页
     while page < pages and page < 50:
-        if(page%5==0 or page==1):
+        if(page == 1):
             progress_bar(page,min(pages,50))
             
         url = f'https://music.163.com/api/v1/resource/comments/R_SO_4_{songid}?limit=20&offset={page}'
         content_json = get(url)
 
         # 从第二页开始获取评论
-        comments(content_json, filepath)
+        users += comments(content_json, filepath)
         page += 1
 
+        if ((page+1) % 5 == 0 or page ==min(pages,50)-1):
+            progress_bar(page+1,min(pages,50))
         sleep()
     
     print("爬取结束!")
+    return users
 
 
 

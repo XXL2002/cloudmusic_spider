@@ -8,6 +8,9 @@ from playlist.get_playlist_comments import get_playlist_comments
 from song.get_song_info import get_song_info
 from song.get_song_comments import get_song_comments
 from singer.get_singer_info import get_singer_info
+from user.get_user_info import get_user_info
+from tools.progressBar import progress_bar
+from tools.sleep import sleep
 
 
 if __name__=="__main__":
@@ -21,7 +24,7 @@ if __name__=="__main__":
 
         trackIds = get_playlist_info(chart_id)     # 爬取排行榜的基本信息
 
-        get_playlist_comments(chart_id)     # 爬取排行榜的评论
+        users = get_playlist_comments(chart_id)     # 爬取排行榜的评论
 
         for song_id in trackIds:  # 遍历该排行榜中的所有歌曲
             
@@ -29,14 +32,12 @@ if __name__=="__main__":
 
             get_singer_info(singer_id)           # 爬取歌手基本信息
 
-            get_song_comments(song_id)           # 爬取歌曲评论
-
-
-        
-
-
-
-
-
-
-
+            users += get_song_comments(song_id)           # 爬取歌曲评论
+            
+            print("正在爬取与本排行榜相关的用户信息...")
+            for i in range(0,len(users)):
+                
+                get_user_info(users[i])
+                if ((i+1) % 100 == 0 or i ==len(users)-1):
+                    progress_bar(i+1,len(users))
+                    sleep()

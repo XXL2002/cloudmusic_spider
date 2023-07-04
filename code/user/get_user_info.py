@@ -40,7 +40,7 @@ def get_user_info(user_id):
         data['age'] = user_age(content_json['profile']['birthday'])
 
     # 省份
-    data['province'] = city_dic[content_json['profile']['province']]
+    data['province'] = city_dic[content_json['profile']['province']] if (content_json['profile']['province'] in city_dic) else "海外"
 
     # 个人介绍
     if content_json['profile']['signature'] == "":
@@ -66,5 +66,5 @@ def get_user_info(user_id):
 
 if __name__ == "__main__":
 
-    data = get_user_info(37132109)    # 获取指定用户的基本信息
+    data = get_user_info(2020510908)    # 获取指定用户的基本信息
     print(data)

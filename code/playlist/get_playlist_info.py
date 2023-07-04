@@ -42,7 +42,7 @@ def get_play_list(playlistid):
     data['creator'] = content_json['playlist']['creator']['userId']
     
     # 歌曲id列表
-    data['tracks'] = ' '.join([str(track['id']) for track in content_json['playlist']['tracks']])
+    data['trackIds'] = [str(track['id']) for track in content_json['playlist']['trackIds']]
 
     save_csv(filepath, data)
     
@@ -52,5 +52,8 @@ def get_play_list(playlistid):
 
 if __name__ == "__main__":
 
-    data = get_play_list(2105681544)    # 获取指定歌单的基本信息
+    # data = get_play_list(2105681544)    # 获取指定歌单的基本信息
+    # print(data)
+
+    data = get_play_list(71384707)    # 获取指定歌单的基本信息
     print(data)

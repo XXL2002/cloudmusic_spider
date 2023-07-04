@@ -1,17 +1,22 @@
 # 爬取相关数据
 import sys
 sys.path.append("code")
-
+from tools.file import save_csv
 from tools.request import get
 
 
-def get_play_list(play_list_id):
+def get_play_list(playlistid):
     '''
         获取指定歌单的基本信息
     '''
-
+    filename = f"playlist_{playlistid}_info"
+    filepath = f"data/{filename}.txt"
+    
+    with open(filepath, 'a', encoding='utf-8') as file:
+        file.write("{},{},{},{},{},{},{}\n".format("id", "name", "playCount", "subscribedCount", "tags", "creator", "tracks"))
+    
     data = {}
-    url = f'https://music.163.com/api/v1/playlist/detail?id={play_list_id}'
+    url = f'https://music.163.com/api/v1/playlist/detail?id={playlistid}'
 
     content_json = get(url)
 
@@ -39,7 +44,9 @@ def get_play_list(play_list_id):
     # 歌曲id列表
     data['tracks'] = ' '.join([str(track['id']) for track in content_json['playlist']['tracks']])
 
-    return data
+    save_csv(filepath, data)
+    
+    return
         
 
 

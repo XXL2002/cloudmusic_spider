@@ -4,9 +4,10 @@ import sys
 sys.path.append("code")
 
 import math
+import time
 from tools.request import get
 from tools.comment import hotcomments, comments
-
+from tools.sleep import sleep
 
 def get_playlist_comments(playlistid):
     '''
@@ -50,6 +51,7 @@ def get_playlist_comments(playlistid):
         # 从第二页开始获取评论
         comments(content_json, filename, page, filepath)
         page += 1
+        sleep()
     
     print("爬取结束!")
 
@@ -59,4 +61,4 @@ if __name__ == "__main__":
 
     # filename = "playlist_comments"
     # filepath = f"data\{filename}.txt"
-    get_playlist_comments(8421225458)
+    get_playlist_comments(2105681544)

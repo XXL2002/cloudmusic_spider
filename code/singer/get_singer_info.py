@@ -2,12 +2,17 @@
 
 import sys
 sys.path.append("code")
-
+from tools.file import save_csv
 from tools.request import get
 
 
 def get_singer_info(singer_id):
-
+    '''
+    获取指定歌手的基本信息
+    '''
+    filename = f"singer_info"
+    filepath = f"data/{filename}.txt"
+    
     url = f'http://music.163.com/api/artist/{singer_id}'
     data = {}
     content_json = get(url)
@@ -27,11 +32,12 @@ def get_singer_info(singer_id):
     # 获取歌手热门歌曲id
     data['hotsongs'] = [hotSong['id'] for hotSong in content_json['hotSongs']]
 
-    return data
+    save_csv(filepath, data)
+
+    return
 
 if __name__=="__main__":
 
-    data = get_singer_info(10559)
-    print(data)
+    get_singer_info(10559)
 
 

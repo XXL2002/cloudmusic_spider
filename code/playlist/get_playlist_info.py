@@ -9,11 +9,11 @@ def get_play_list(playlistid):
     '''
         获取指定歌单的基本信息
     '''
-    filename = f"playlist_{playlistid}_info"
+    filename = f"playlist_info"
     filepath = f"data/{filename}.txt"
     
-    with open(filepath, 'a', encoding='utf-8') as file:
-        file.write("{},{},{},{},{},{},{}\n".format("id", "name", "playCount", "subscribedCount", "tags", "creator", "tracks"))
+    # with open(filepath, 'a', encoding='utf-8') as file:
+    #     file.write("{},{},{},{},{},{},{}\n".format("id", "name", "playCount", "subscribedCount", "tags", "creator", "tracks"))
     
     data = {}
     url = f'https://music.163.com/api/v1/playlist/detail?id={playlistid}'
@@ -52,8 +52,6 @@ def get_play_list(playlistid):
 
 if __name__ == "__main__":
 
-    # data = get_play_list(2105681544)    # 获取指定歌单的基本信息
-    # print(data)
+    # get_play_list(2105681544)    # 获取指定歌单的基本信息
 
-    data = get_play_list(71384707)    # 获取指定歌单的基本信息
-    print(data)
+    get_play_list(71384707)    # 获取指定歌单的基本信息

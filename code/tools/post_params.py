@@ -57,8 +57,8 @@ def AESencrypt(msg, key):
     enctext = encodestrs.decode('utf-8')
 
     return enctext
-
-
+    
+    
 # RSA加密
 def RSAencrypt(randomstrs, key, f):
 
@@ -105,28 +105,25 @@ def get_params(page):
     return encText, encSecKey
 
 
-# 获取参数:两次AES加密生成encText，再进行RSA加密生成encSecKey
-def get_params_test():
-
+def get_params_id(user_id):
     # msg也可以写成msg = {"offset":"页面偏移量=(页数-1) *　20", "limit":"20"},offset和limit这两个参数必须有(js)
     # limit最大值为100,当设为100时,获取第二页时,默认前一页是20个评论,也就是说第二页最新评论有80个,有20个是第一页显示的
     # msg = '{"rid":"R_SO_4_1302938992","offset":"0","total":"True","limit":"100","csrf_token":""}'
-
-    # 生成一个包含评论请求参数的JSON字符串
-    # offset--偏移量，total--是否包含总评论数，limit--每页的评论数量，csrf_token--一个可选的CSRF令牌
+    # 偏移量
+    # offset = (page-1) * 20
     # offset和limit是必选参数,其他参数是可选的,其他参数不影响data数据的生成
-    msg = '{"rid:"A_PL_0_41983274",offset":"0",total":"True","limit":"20","csrf_token":""}'
-    key = '0CoJUm6Qyw8W8jud'    # 密钥用于加密评论请求参数
-    enctext = AESencrypt(msg, key)  # 对评论请求参数msg进行加密，加密的结果存储在enctext变量中
+    msg='{"uid":' + str(user_id) +',"type":"-1","limit":"1000","offset":"0","total":"True","csrf_token":""}'
+    key = '0CoJUm6Qyw8W8jud'
+    f = '00e0b509f6259df8642dbc35662901477df22677ec152b5ff68ace615bb7b725152b3ab17a876aea8a5aa76d2e417629ec4ee341f56135fccf695280104e0312ecbda92557c93870114af6c9d05c4f7f0c3685b7a46bee255932575cce10b424d813cfe4875d3e82047b97ddef52741d546b8e289dc6935b3ece0462db0a22b8e7'
+    e = '010001'
+
+    enctext = AESencrypt(msg, key)
 
     # 生成长度为16的随机字符串
     i = generate_random_strs(16)
 
-    # 两次AES加密之后得到encText
+    # 两次AES加密之后得到params的值
     encText = AESencrypt(enctext, i)
-
-    f = '00e0b509f6259df8642dbc35662901477df22677ec152b5ff68ace615bb7b725152b3ab17a876aea8a5aa76d2e417629ec4ee341f56135fccf695280104e0312ecbda92557c93870114af6c9d05c4f7f0c3685b7a46bee255932575cce10b424d813cfe4875d3e82047b97ddef52741d546b8e289dc6935b3ece0462db0a22b8e7'
-    e = '010001'
 
     # RSA加密之后得到encSecKey的值
     encSecKey = RSAencrypt(i, e, f)

@@ -1,19 +1,15 @@
 # 爬取相关数据
 import sys
 sys.path.append("code")
+from tools.struct import file_info_paths
 from tools.file import save_csv
 from tools.request import get
 
 
-def get_play_list(playlistid):
+def get_playlist_info(playlistid):
     '''
         获取指定歌单的基本信息
     '''
-    filename = f"playlist_info"
-    filepath = f"data/{filename}.txt"
-    
-    # with open(filepath, 'a', encoding='utf-8') as file:
-    #     file.write("{},{},{},{},{},{},{}\n".format("id", "name", "playCount", "subscribedCount", "tags", "creator", "tracks"))
     
     data = {}
     url = f'https://music.163.com/api/v1/playlist/detail?id={playlistid}'
@@ -21,10 +17,10 @@ def get_play_list(playlistid):
     content_json = get(url)
 
     # 歌单ID
-    data['id'] = content_json['playlist']['id']
+    data['playlist_id'] = content_json['playlist']['id']
     
     # 歌单名称
-    data['name'] = content_json['playlist']['name']
+    data['playlist_name'] = content_json['playlist']['name']
     
     # 播放量
     data['playCount'] = content_json['playlist']['playCount']
@@ -44,14 +40,12 @@ def get_play_list(playlistid):
     # 歌曲id列表
     data['trackIds'] = [str(track['id']) for track in content_json['playlist']['trackIds']]
 
-    save_csv(filepath, data)
+    save_csv(file_info_paths['playlist'], data)
     
-    return
+    return data['trackIds']
         
 
 
 if __name__ == "__main__":
 
-    # get_play_list(2105681544)    # 获取指定歌单的基本信息
-
-    get_play_list(71384707)    # 获取指定歌单的基本信息
+    get_playlist_info(19723756)    # 获取指定歌单的基本信息

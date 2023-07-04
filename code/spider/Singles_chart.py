@@ -11,9 +11,13 @@ from singer.get_singer_info import get_singer_info
 from user.get_user_info import get_user_info
 from tools.progressBar import progress_bar
 from tools.sleep import sleep
-
+from tools.file import cleardir
 
 if __name__=="__main__":
+    
+    cleardir(r'data/info')
+    cleardir(r'data/song_comments')
+    cleardir(r'data/playlist_comments')
     
     add_header(file_info_paths['playlist'], file_headers['playlist'])
     add_header(file_info_paths['song'], file_headers['song'])

@@ -23,7 +23,7 @@ def get_song_info(songid):
         data['songname'] = song['name']
 
         # 获取歌手名(只获取第一个)
-        data['songer'] = song['artists'][0]['name']
+        data['singer'] = song['artists'][0]['name']
 
         # 获取歌手ID
         data['singer_id'] = song['artists'][0]['id']

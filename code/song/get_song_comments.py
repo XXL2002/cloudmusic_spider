@@ -15,8 +15,9 @@ def get_song_comments(songid):
     '''
         获取歌曲评论
     '''
-    filename = f"song_{songid}_comments"
-    filepath = f"data/{filename}.txt"
+
+    filename = f"song_{songid}"
+    filepath = f"data\song_comments\{filename}.txt"
     
     add_header(filepath, file_headers['comment'])
 

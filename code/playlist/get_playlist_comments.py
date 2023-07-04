@@ -15,8 +15,8 @@ def get_playlist_comments(playlistid):
     '''
         获取歌单的评论
     '''
-    filename = f"playlist_{playlistid}_comments"
-    filepath = f"data/{filename}.txt"
+    filename = f"playlist_{playlistid}"
+    filepath = f"data\playlist_comments\{filename}.txt"
 
     add_header(filepath, file_headers['comment'])
 

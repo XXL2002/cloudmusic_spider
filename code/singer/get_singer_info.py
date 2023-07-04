@@ -4,14 +4,12 @@ import sys
 sys.path.append("code")
 from tools.file import save_csv
 from tools.request import get
-
+from tools.struct import file_info_paths
 
 def get_singer_info(singer_id):
     '''
     获取指定歌手的基本信息
     '''
-    filename = f"singer_info"
-    filepath = f"data/{filename}.txt"
     
     url = f'http://music.163.com/api/artist/{singer_id}'
     data = {}
@@ -32,7 +30,7 @@ def get_singer_info(singer_id):
     # 获取歌手热门歌曲id
     data['hotsongs'] = [hotSong['id'] for hotSong in content_json['hotSongs']]
 
-    save_csv(filepath, data)
+    save_csv(file_info_paths['singer'], data)
 
     return
 

@@ -60,7 +60,7 @@ def get_user_info(user_id):
 
     save_csv(file_info_paths['user'], data)
 
-    return data
+    # return data
     
 
 

@@ -18,8 +18,8 @@ def get_user_listen_rank(user_id):
 
     content_json = post(url, data)
 
-    if(content_json['code']==-2):
-        return alldatalist,weeklist
+    if(content_json is None):
+        return alldatalist, weeklist
     i = j = 0
 
     for item in content_json['allData']:
@@ -36,6 +36,6 @@ def get_user_listen_rank(user_id):
 
 if __name__=="__main__":
 
-    user_id=91518495
+    user_id = 2020510908
     alldatalist,weekdatalist=get_user_listen_rank(user_id)
     print(alldatalist,weekdatalist)

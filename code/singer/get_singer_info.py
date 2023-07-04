@@ -5,6 +5,7 @@ sys.path.append("code")
 from tools.file import save_csv
 from tools.request import get
 from tools.struct import file_info_paths
+from tools.utils import list2str
 
 def get_singer_info(singer_id):
     '''
@@ -28,11 +29,12 @@ def get_singer_info(singer_id):
     data['fans'] = content_json1['profile']['followeds']
 
     # 获取歌手热门歌曲id
-    data['hotsongs'] = [hotSong['id'] for hotSong in content_json['hotSongs']]
+    hotSongs = [hotSong['id'] for hotSong in content_json['hotSongs']]
+    data['hotsongs'] = list2str(hotSongs)
 
     save_csv(file_info_paths['singer'], data)
 
-    return
+    # return
 
 if __name__=="__main__":
 

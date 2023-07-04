@@ -4,7 +4,7 @@ sys.path.append("code")
 from tools.struct import file_info_paths
 from tools.file import save_csv
 from tools.request import get
-
+from tools.utils import list2str
 
 def get_playlist_info(playlistid):
     '''
@@ -38,7 +38,8 @@ def get_playlist_info(playlistid):
     data['creator'] = content_json['playlist']['creator']['userId']
     
     # 歌曲id列表
-    data['trackIds'] = [track['id'] for track in content_json['playlist']['trackIds']]
+    ids = [track['id'] for track in content_json['playlist']['trackIds']]
+    data['trackIds'] = list2str(ids)
 
     save_csv(file_info_paths['playlist'], data)
     

@@ -6,13 +6,14 @@ sys.path.append("code")
 from tools.struct import city_dic
 from tools.utils import user_age
 from tools.request import get
+from tools.struct import file_info_paths
+from tools.file import save_csv
 
-
-def get_user(user_id):
+def get_user_info(user_id):
     '''
         获取用户基本信息
     '''
-
+    
     data = {}
     url = f'https://music.163.com/api/v1/user/detail/{user_id}'
 
@@ -44,6 +45,7 @@ def get_user(user_id):
     else:
         data['signature'] = content_json['profile']['signature'].replace("\n","").replace("\u200b", "")
 
+    save_csv(file_info_paths['user'], data)
 
     return data
         
@@ -51,5 +53,5 @@ def get_user(user_id):
 
 if __name__ == "__main__":
 
-    data = get_user(31475897)    # 获取指定用户的基本信息
+    data = get_user_info(37132109)    # 获取指定用户的基本信息
     print(data)

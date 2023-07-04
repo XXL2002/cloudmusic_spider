@@ -4,10 +4,7 @@ sys.path.append("code")
 from tools.file import save_csv
 
 # 从json中提取热评
-def hotcomments(content_json, name, i, filepath): 
-
-    # 写入文件
-    print("正在获取{}的第{}页评论！\n".format(name, i))
+def hotcomments(content_json, filepath): 
 
     m = 1   # 记录第几条精彩评论
     data = {}   # 存储数据
@@ -55,9 +52,8 @@ def hotcomments(content_json, name, i, filepath):
 
 
 # 从json提取普通评论
-def comments(content_json, name, i, filepath):
+def comments(content_json, filepath):
 
-    print("正在获取{}的第{}页评论！\n".format(name, i))
     
     # 全部评论
     j = 1

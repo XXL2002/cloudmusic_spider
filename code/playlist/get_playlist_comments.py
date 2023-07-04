@@ -8,6 +8,8 @@ from tools.request import get
 from tools.comment import hotcomments, comments
 from tools.sleep import sleep
 from tools.progressBar import progress_bar
+from tools.struct import file_headers
+from tools.file import add_header
 
 def get_playlist_comments(playlistid):
     '''
@@ -16,8 +18,7 @@ def get_playlist_comments(playlistid):
     filename = f"playlist_{playlistid}_comments"
     filepath = f"data/{filename}.txt"
 
-    with open(filepath, 'a', encoding='utf-8') as file:
-        file.write("{},{},{},{},{},{},{}\n".format("user_id", "user_name", "comment_id", "comment", "time", "likecount", "location"))
+    add_header(filepath, file_headers['comment'])
 
     print(f'开始爬取!==>{filename}')
 
@@ -43,9 +44,9 @@ def get_playlist_comments(playlistid):
     page = 1
 
     # 爬取前75页评论
-    while page < pages and page < 75:
+    while page < pages and page < 50:
         if(page%5==0 or page==1):
-            progress_bar(page,min(pages,75))
+            progress_bar(page,min(pages,50))
 
         url = f'https://music.163.com/api/v1/resource/comments/A_PL_0_{playlistid}?limit=20&offset={page}'
         content_json = get(url)

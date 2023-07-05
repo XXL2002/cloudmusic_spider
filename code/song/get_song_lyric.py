@@ -16,31 +16,6 @@ def get_song_lyric(songid):
     content_json = get(url)
 
     lyric = content_json['lrc']['lyric'].replace("\n", "")
-    pattern1 = r"\[[^\]]*\]"
-    lyric = re.sub(pattern1, " ", lyric).lstrip()
-    pattern2 = r"作词\s*:\s*\w+\s*"
-    lyric = re.sub(pattern2, "", lyric)
-    pattern3 = r"作曲\s*:\s*\w+\s*"
-    lyric = re.sub(pattern3, "", lyric)
-    pattern4 = r'制作人\s*:\s*\w+\s*'
-    lyric = re.sub(pattern4, "", lyric)
-    pattern5 = r'编曲\s*:\s*\w+\s*'
-    lyric = re.sub(pattern5, "", lyric)
-
-    # pattern6 = r'配唱编写\s*:\s*\w+\s*'
-    # lyric = re.sub(pattern6, "", lyric)
-
-    # pattern7 = r'吉他\s*:\s*\w+\s*'
-    # lyric = re.sub(pattern7, "", lyric)
-
-    # pattern8 = r'吉他录音\s*:\s*\w+\s*'
-    # lyric = re.sub(pattern8, "", lyric)
-
-    # pattern9 = r'贝斯\s*:\s*\w+\s*'
-    # lyric = re.sub(pattern9, "", lyric)
-
-    # pattern10 = r'贝斯\s*:\s*\w+\s*'
-    # lyric = re.sub(pattern10, "", lyric)
 
     return lyric
 

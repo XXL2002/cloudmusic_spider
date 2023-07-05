@@ -11,9 +11,37 @@ from user.get_user_info import get_user_info
 from tools.progressBar import progress_bar
 from tools.sleep import sleep
 from tools.file import cleardir
+import multiprocessing
+
+
+# 爬取一个排行榜的信息
+def chart_spider(chart_id):
+    
+    trackIds = get_playlist_info(chart_id)     # 爬取排行榜的基本信息
+
+    users = get_playlist_comments(chart_id)     # 爬取排行榜的评论
+    
+    for song_id in trackIds:  # 遍历该排行榜中的所有歌曲
+        
+        singer_id = get_song_info(song_id)   # 爬取歌曲基本信息
+
+        get_singer_info(singer_id)           # 爬取歌手基本信息
+
+        users += get_song_comments(song_id)           # 爬取歌曲评论
+        
+    print("\t正在爬取与本排行榜相关的用户信息...")
+
+    users = list(set(users))    # 用户去重
+    for i in range(0, len(users)):
+        
+        get_user_info(users[i])
+        if ((i+1) % 100 == 0 or i == len(users)-1):
+            progress_bar(i+1, len(users))
+            sleep()
+
 
 if __name__=="__main__":
-    
+
     cleardir(r'data\info')
     # cleardir(r'data\song_comments')
     # cleardir(r'data\playlist_comments')
@@ -23,26 +51,10 @@ if __name__=="__main__":
     add_header(file_info_paths['singer'], file_headers['singer'])
     add_header(file_info_paths['user'], file_headers['user'])
 
+    pool = multiprocessing.Pool(processes=4)
     for chart_id in Music_charts.values():   # 遍历每个排行榜
 
-        trackIds = get_playlist_info(chart_id)     # 爬取排行榜的基本信息
+        pool.apply_async(chart_spider, (chart_id,))
 
-        users = get_playlist_comments(chart_id)     # 爬取排行榜的评论
-
-        for song_id in trackIds:  # 遍历该排行榜中的所有歌曲
-            
-            singer_id = get_song_info(song_id)   # 爬取歌曲基本信息
-
-            get_singer_info(singer_id)           # 爬取歌手基本信息
-
-            users += get_song_comments(song_id)           # 爬取歌曲评论
-            
-        print("\t正在爬取与本排行榜相关的用户信息...")
-
-        users = list(set(users))    # 用户去重
-        for i in range(0, len(users)):
-            
-            get_user_info(users[i])
-            if ((i+1) % 100 == 0 or i == len(users)-1):
-                progress_bar(i+1, len(users))
-                sleep()
+    pool.close()
+    pool.join()     # 等待子线程结束

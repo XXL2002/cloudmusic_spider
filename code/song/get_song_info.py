@@ -19,6 +19,9 @@ def get_song_info(songid):
     data = {}
     for song in content_json['songs']:
         
+        # 获取歌曲id
+        data['song_id'] = songid
+        
         # 获取歌曲名
         data['songname'] = song['name']
 

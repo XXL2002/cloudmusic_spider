@@ -24,6 +24,9 @@ def get_user_info(user_id):
     url = f'https://music.163.com/api/v1/user/detail/{user_id}'
 
     content_json = get(url)
+    
+    # 用户ID
+    data['user_id'] = user_id
 
     # 用户名
     data['nickname'] = content_json['profile']['nickname']

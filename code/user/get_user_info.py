@@ -74,7 +74,7 @@ def get_user_info(user_id):
     print("\t\t正在爬取TA的听歌周榜...")
     for i in range(0,len(weeklist)):
         print(f"周榜{i+1}/{len(weeklist)}")
-        filepath = f"data/song_comments/song_{alldatalist[i]}.txt"
+        filepath = f"data/song_comments/song_{weeklist[i]}.txt"
         if os.path.exists(filepath):    # 这首歌已经爬取过数据
             continue
         get_song_info(weeklist[i])

@@ -14,6 +14,7 @@ from tools.sleep import sleep
 from tools.file import cleardir
 from multiprocessing import Process
 from threading import Thread
+import multiprocessing as mp
 
 def init():
     cleardir(r'data/info')
@@ -48,7 +49,7 @@ def analist(chart_id):
     tracks=[]
     for i in range(0,len(trackIds)):  # 遍历该排行榜中的所有歌曲
         
-        track = Thread(target=anasong,args=(trackIds[i],i,len(trackIds),users))
+        track = Process(target=anasong,args=(trackIds[i],i,len(trackIds),users))
         track.start()
         tracks.append(track)
 
@@ -64,7 +65,7 @@ def analist(chart_id):
         sleep()
         uid = users[i]
         print(uid)
-        us = Thread(target=anauser,args=(uid,i,len(users)))
+        us = Process(target=anauser,args=(uid,i,len(users)))
         us.start()
         us.join()
     return
@@ -72,7 +73,11 @@ def analist(chart_id):
 if __name__=="__main__":
     
     init()
+    # pool = mp.Pool()
+    # pool.map(analist,Music_charts.values())
+    
     for chart_id in Music_charts.values():
+        
         pl = Process(target=analist,args={chart_id})
         pl.start()
     

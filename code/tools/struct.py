@@ -117,7 +117,7 @@ file_headers = {
     'singer': ["singer_id", "accountId", "fans", "singer_name", "hotsongs"],
     'playlist': ["playlist_id", "playlist_name", "playCount", "subscribedCount", "description", "tags", "creator", "trackIds"],
     'comment': ["user_id", "user_name", "comment_id", "comment", "likecount", "location"],
-    'user': ["nickname", "gender", "age", "province", "signature"]
+    'user': ["nickname", "gender", "age", "province", "signature", "all_rank", "week_rank", "create_play", "collect_play"]
 }
 
 

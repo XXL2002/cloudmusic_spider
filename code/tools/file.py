@@ -5,7 +5,7 @@ import os
 # 将json格式的值列表转换为逗号分割的字符串
 def json2str(data):
 
-    return ','.join([str(i) for i in list(data.values())])
+    return ' @#$#@ '.join([str(i) for i in list(data.values())])
 
 
 # 向指定文件添加文件头
@@ -13,6 +13,7 @@ def add_header(filepath, header):
     with open(filepath, 'a', encoding='utf-8') as file:
         file.write(','.join([str(i) for i in header]) + "\n")
     file.close()
+    return
 
 
 # 将json格式值数据写入csv文件

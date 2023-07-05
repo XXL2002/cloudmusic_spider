@@ -15,14 +15,13 @@ from tools.file import cleardir
 if __name__=="__main__":
     
     cleardir(r'data\info')
-    cleardir(r'data\song_comments')
-    cleardir(r'data\playlist_comments')
+    # cleardir(r'data\song_comments')
+    # cleardir(r'data\playlist_comments')
 
     add_header(file_info_paths['playlist'], file_headers['playlist'])
     add_header(file_info_paths['song'], file_headers['song'])
     add_header(file_info_paths['singer'], file_headers['singer'])
     add_header(file_info_paths['user'], file_headers['user'])
-    
 
     for chart_id in Music_charts.values():   # 遍历每个排行榜
 
@@ -39,9 +38,11 @@ if __name__=="__main__":
             users += get_song_comments(song_id)           # 爬取歌曲评论
             
         print("\t正在爬取与本排行榜相关的用户信息...")
-        for i in range(0,len(users)):
+
+        users = list(set(users))    # 用户去重
+        for i in range(0, len(users)):
             
             get_user_info(users[i])
-            if ((i+1) % 100 == 0 or i ==len(users)-1):
-                progress_bar(i+1,len(users))
+            if ((i+1) % 100 == 0 or i == len(users)-1):
+                progress_bar(i+1, len(users))
                 sleep()

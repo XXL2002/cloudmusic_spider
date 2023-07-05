@@ -39,12 +39,17 @@ def anasong(track_id,i,size,users):
 
     get_singer_info(singer_id)           # 爬取歌手基本信息
 
-    users += get_song_comments(track_id)           # 爬取歌曲评论
+    tmp_users = get_song_comments(track_id)           # 爬取歌曲评论
+    # 取每首歌的前10个用户
+    tmp_users = tmp_users[0:10] if len(tmp_users)>=10 else tmp_users
+    users += tmp_users
     
 def analist(chart_id):
     trackIds = get_playlist_info(chart_id)     # 爬取排行榜的基本信息
 
     users = get_playlist_comments(chart_id)     # 爬取排行榜的评论
+    # 取每个歌单的前20个用户
+    users = users[0:20] if len(users)>=20 else users
 
     tracks=[]
     for i in range(0,len(trackIds)):  # 遍历该排行榜中的所有歌曲
@@ -56,8 +61,8 @@ def analist(chart_id):
     for p in tracks:
         p.join()
     
-    users = users[0:20] if len(users)>=20 else users
-    # Light只取20个用户
+    
+    # Light对于每个歌单只取20*1+10*10个用户
     users = list(set(users))
     print(users)
     print("\t正在爬取与本排行榜相关的用户信息...")

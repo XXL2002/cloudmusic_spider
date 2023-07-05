@@ -62,6 +62,7 @@ def get_user_info(user_id):
     data['create_play'] = list2str(create_playlists)
     data['collect_play'] = list2str(collect_playlists)
     
+    save_csv(file_info_paths['user'], data)
     
     print("\t\t正在爬取TA的听歌总榜...")
     for i in range(0,len(alldatalist)):
@@ -81,7 +82,7 @@ def get_user_info(user_id):
         get_song_comments(weeklist[i])
 
 
-    save_csv(file_info_paths['user'], data)
+    # save_csv(file_info_paths['user'], data)
 
     # return data
     

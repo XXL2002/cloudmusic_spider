@@ -2,7 +2,7 @@ import sys
 sys.path.append("code")
 
 from tools.file import save_csv
-
+# from tools.utils import timestamp2date
 
 # 从json中提取热评
 def hotcomments(content_json, filepath): 
@@ -33,7 +33,7 @@ def hotcomments(content_json, filepath):
             data['comment'] = item['content'].replace("\n"," ")
             
             # 热评时间
-            data['time'] = item['timeStr']
+            # data['date'], data['time'] = timestamp2date(item['time'])
 
             # 热评点赞数
             data['likecount'] = item['likedCount']
@@ -83,7 +83,7 @@ def comments(content_json, filepath):
         data['comment'] = item['content'].replace("\n"," ")
         
         # 发表评论时间
-        data['time'] = item['timeStr']
+        # data['date'], data['time'] = timestamp2date(item['time'])
 
         # 发表评论点赞数
         data['likecount'] = item['likedCount']

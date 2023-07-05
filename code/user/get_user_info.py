@@ -63,14 +63,14 @@ def get_user_info(user_id):
     save_csv(file_info_paths['user'], data)
 
     for song_id in alldatalist:
-        filepath = f"data\song_comments\song_{song_id}.txt"
+        filepath = f"data/song_comments/song_{song_id}.txt"
         if os.path.exists(filepath):    # 这首歌已经爬取过数据
             continue
         get_song_info(song_id)
         get_song_comments(song_id)
 
     for song_id in weeklist:
-        filepath = f"data\song_comments\song_{song_id}.txt"
+        filepath = f"data/song_comments/song_{song_id}.txt"
         if os.path.exists(filepath):    # 这首歌已经爬取过数据
             continue
         get_song_info(song_id)

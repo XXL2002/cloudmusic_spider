@@ -3,6 +3,7 @@ import sys
 sys.path.append("code")
 
 import math
+import os
 from tools.request import get
 from tools.comment import hotcomments, comments
 from tools.sleep import sleep
@@ -11,14 +12,17 @@ from tools.file import add_header
 from tools.struct import file_headers
 
 
+
 def get_song_comments(songid):
     '''
         获取歌曲评论
     '''
 
     filename = f"song_{songid}"
-    filepath = f"data\song_comments\{filename}.txt"
-    
+    filepath = f"data/song_comments/{filename}.txt"
+    if os.path.exists(filepath):
+        return []
+
     add_header(filepath, file_headers['comment'])
 
     print(f'\t\t开始爬取单曲评论!==>{filename}')
@@ -46,9 +50,9 @@ def get_song_comments(songid):
     page = 1
 
     # 取50个页
-    while page < pages and page < 50:
+    while page < pages and page < 5:
         if(page == 1):
-            progress_bar(page,min(pages,50))
+            progress_bar(page,min(pages,5))
             
         url = f'https://music.163.com/api/v1/resource/comments/R_SO_4_{songid}?limit=20&offset={page}'
         content_json = get(url)
@@ -57,8 +61,8 @@ def get_song_comments(songid):
         users += comments(content_json, filepath)
         page += 1
 
-        if ((page+1) % 5 == 0 or page ==min(pages,50)-1):
-            progress_bar(page+1,min(pages,50))
+        if ((page+1) % 5 == 0 or page ==min(pages,5)-1):
+            progress_bar(page+1,min(pages,5))
         sleep()
     
     print("爬取结束!")

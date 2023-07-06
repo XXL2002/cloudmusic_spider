@@ -8,10 +8,11 @@ from tools.struct import get_header
 # get请求，返回json数据
 def get(url):
 
-    response = requests.get(url, headers=get_header())
-    content_json = response.json()
-
     try:
+        response = requests.get(url, headers=get_header())
+        content_json = response.json()
+
+    
         if content_json['code'] == 200:
 
             response.close()

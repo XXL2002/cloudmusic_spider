@@ -16,6 +16,9 @@ def get_song_info(songid):
     url = f'https://music.163.com/api/song/detail/?id={songid}&ids=[{songid}]'
     content_json = get(url)
     
+    if content_json is None:
+        return -1
+    
     data = {}
     for song in content_json['songs']:
         

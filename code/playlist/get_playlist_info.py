@@ -16,6 +16,9 @@ def get_playlist_info(playlistid):
 
     content_json = get(url)
 
+    if content_json is None:
+        return []
+    
     # 歌单ID
     data['playlist_id'] = content_json['playlist']['id']
     

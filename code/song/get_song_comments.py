@@ -29,7 +29,10 @@ def get_song_comments(songid):
 
     # 获取第一页评论，json格式
     content_json = get(url)
-
+    
+    if content_json is None:
+        return []
+    
     # 评论总数
     total = content_json['total']
 

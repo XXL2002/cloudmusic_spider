@@ -15,6 +15,9 @@ def get_song_lyric(songid):
     url = f'https://music.163.com/api/song/lyric?id={songid}&lv=1&kv=1&tv=-1'
     content_json = get(url)
 
+    if content_json is None:
+        return ""
+    
     lyric = content_json['lrc']['lyric'].replace("\n", "")
     
     # 取消数据清洗

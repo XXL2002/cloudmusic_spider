@@ -36,7 +36,7 @@ def get_song_info(songid):
 
         # 获取歌词
         data['lyric'] = get_song_lyric(songid)
-        print(data)
+        
         save_csv(file_info_paths['song'], data)
         
         return data['singer_id']
@@ -44,4 +44,4 @@ def get_song_info(songid):
 
 if __name__ == "__main__":
 
-    get_song_info(1397105439)
+    get_song_info(497572729)

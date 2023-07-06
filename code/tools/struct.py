@@ -29,7 +29,7 @@ def get_header():
 
 # 城市字典
 city_dic = {
-    0: '未知',
+    0: 'null',
     110000: '北京市',
     120000: '天津市',
     130000: '河北省',
@@ -113,11 +113,11 @@ Music_charts = {
 
 # 文件头
 file_headers = {
-    'song': ["songname", "singer", "singer_id", "album", "lyric"],
-    'singer': ["singer_id", "accountId", "fans", "singer_name", "hotsongs"],
+    'song': ["song_id", "song_name", "singer_id", "singer_name", "album", "lyric"],
+    'singer': ["singer_id", "singer_name", "accountId", "fans", "hotsongs"],
     'playlist': ["playlist_id", "playlist_name", "playCount", "subscribedCount", "description", "tags", "creator", "trackIds"],
     'comment': ["user_id", "user_name", "comment_id", "comment", "likecount", "location"],
-    'user': ["nickname", "gender", "age", "province", "signature", "all_rank", "week_rank", "create_play", "collect_play"]
+    'user': ["nickname", "gender", "age", "province", "signature", "listenSongs", "all_rank", "week_rank", "create_play", "collect_play"]
 }
 
 

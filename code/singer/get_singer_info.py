@@ -19,6 +19,9 @@ def get_singer_info(singer_id):
     # 歌手ID
     data['singer_id'] = singer_id
     
+    # 获取歌手名称
+    data['singer_name'] = content_json['artist']['name']
+    
     # accountId存在时有歌手个人主页
     if 'accountId' in content_json['artist']:
 
@@ -34,12 +37,8 @@ def get_singer_info(singer_id):
 
     else:
 
-        data['accountId'] = 0
-        data['fans'] = 0
-
-
-    # 获取歌手名称
-    data['singer_name'] = content_json['artist']['name']
+        data['accountId'] = 'null'
+        data['fans'] = 'null'
 
 
     # 获取歌手热门歌曲id
@@ -53,7 +52,7 @@ def get_singer_info(singer_id):
 
 if __name__=="__main__":
 
-    data = get_singer_info(10559)
+    data = get_singer_info(3684)
     print(data)
 
 

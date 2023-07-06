@@ -33,11 +33,11 @@ def get_user_info(user_id):
     elif content_json['profile']['gender'] == 2:
         data['gender'] = '女'
     else:
-        data['gender'] = '未知'
+        data['gender'] = 'null'
 
     # 年龄
     if content_json['profile']['birthday'] < 0:     # 时间戳小于0，该用户未填年龄
-        data['age'] = -1
+        data['age'] = 'null'
     else: 
         data['age'] = user_age(content_json['profile']['birthday'])
 
@@ -46,22 +46,40 @@ def get_user_info(user_id):
 
     # 个人介绍
     if content_json['profile']['signature'] == "":
-        data['signature'] = "无"
+        data['signature'] = "null"
     else:
         data['signature'] = content_json['profile']['signature'].replace("\n","").replace("\u200b", "")
 
+    # 累积听歌总数
+    data['listenSongs'] = content_json['listenSongs']
+
     # 获取用户近一周听歌排行(10首)
     alldatalist, weeklist = get_user_listen_rank(user_id)
-    data['all_rank'] = list2str(alldatalist)
-    data['week_rank'] = list2str(weeklist)
-    
+    if alldatalist != []:
+        data['all_rank'] = list2str(alldatalist)
+    else:
+        data['all_rank'] = 'null'
+
+    if  weeklist != []:  
+        data['week_rank'] = list2str(weeklist)
+    else:
+        data['week_rank'] = 'null'
+
     # 获取用户创建和收藏的歌单
     create_playlists, collect_playlists = get_user_playlist(data['nickname'], user_id)
-    data['create_play'] = list2str(create_playlists)
-    data['collect_play'] = list2str(collect_playlists)
+    if create_playlists != []:
+        data['create_play'] = list2str(create_playlists)
+    else:
+        data['create_play'] = 'null'
+
+    if collect_playlists != []:
+        data['collect_play'] = list2str(collect_playlists)
+    else:
+        data['collect_play'] = 'null'
 
     save_csv(file_info_paths['user'], data)
 
+    
     for song_id in alldatalist:
         filepath = f"data/song_comments/song_{song_id}.txt"
         if os.path.exists(filepath):    # 这首歌已经爬取过数据
@@ -83,5 +101,5 @@ def get_user_info(user_id):
 
 if __name__ == "__main__":
 
-    data = get_user_info(2020510908)    # 获取指定用户的基本信息
+    data = get_user_info(3343232527)    # 获取指定用户的基本信息
     print(data)

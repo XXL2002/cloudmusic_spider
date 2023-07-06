@@ -32,8 +32,13 @@ def get_playlist_info(playlistid):
     data['description'] = content_json['playlist']['description'].replace("\n", "")
 
     # 歌单标签
-    data['tags'] = content_json['playlist']['tags']
-    
+    if content_json['playlist']['tags'] != []:
+        data['tags'] = ' '.join(content_json['playlist']['tags'])
+    else:
+        data['tags'] = 'null'
+
+    print(data['tags'])
+
     # 创建者ID
     data['creator'] = content_json['playlist']['creator']['userId']
     
@@ -44,9 +49,9 @@ def get_playlist_info(playlistid):
     save_csv(file_info_paths['playlist'], data)
     
     return ids[0:10]    # 只分析前十首歌
-        
+    
 
 
 if __name__ == "__main__":
 
-    get_playlist_info(19723756)    # 获取指定歌单的基本信息
+    get_playlist_info(60198)    # 获取指定歌单的基本信息

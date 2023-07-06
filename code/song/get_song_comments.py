@@ -23,7 +23,7 @@ def get_song_comments(songid):
     if os.path.exists(filepath):
         return []
 
-    add_header(filepath, file_headers['comment'])
+    # add_header(filepath, file_headers['comment'])
 
     print(f'\t\t开始爬取单曲评论!==>{filename}')
 

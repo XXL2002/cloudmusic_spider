@@ -19,21 +19,24 @@ def get_song_info(songid):
     data = {}
     for song in content_json['songs']:
         
-        # 获取歌曲名
-        data['songname'] = song['name']
+        # 歌曲id
+        data['song_id'] = songid
 
-        # 获取歌手名(只获取第一个)
-        data['singer'] = song['artists'][0]['name']
+        # 获取歌曲名
+        data['song_name'] = song['name']
 
         # 获取歌手ID
         data['singer_id'] = song['artists'][0]['id']
+        
+        # 获取歌手名(只获取第一个)
+        data['singer_name'] = song['artists'][0]['name']
         
         # 获取所属专辑
         data['album'] = song['album']['name']
 
         # 获取歌词
         data['lyric'] = get_song_lyric(songid)
-
+        print(data)
         save_csv(file_info_paths['song'], data)
         
         return data['singer_id']
@@ -41,4 +44,4 @@ def get_song_info(songid):
 
 if __name__ == "__main__":
 
-    get_song_info(1959190717)
+    get_song_info(1397105439)

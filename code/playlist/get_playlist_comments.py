@@ -21,7 +21,7 @@ def get_playlist_comments(playlistid):
     if os.path.exists(filepath):
         return []
     
-    add_header(filepath, file_headers['comment'])
+    # add_header(filepath, file_headers['comment'])
 
     print(f'\t开始爬取歌单评论!==>{filename}')
 

@@ -26,7 +26,7 @@ def get_user_playlist(user_name, user_id):
 
             collect_playlists.append(playlist['id'])
 
-    return create_playlists, collect_playlists
+    return create_playlists[0:10], collect_playlists[0:10]
 
 
 if __name__=="__main__":

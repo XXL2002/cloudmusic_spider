@@ -116,9 +116,7 @@ def analist(chart_id):
     pool_songs.join()
     return
 
-# 爬取一个排行榜的信息
-def chart_spider(chart_id):
-    
+if __name__ == "__main__":    
     init()
     # pool = mp.Pool()
     # pool.map(analist,Music_charts.values())

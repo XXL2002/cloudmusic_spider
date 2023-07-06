@@ -1,3 +1,4 @@
+from itertools import zip_longest
 import sys
 sys.path.append("code")
 from tools.struct import Music_charts, file_headers, file_info_paths
@@ -11,50 +12,119 @@ from user.get_user_info import get_user_info
 from tools.progressBar import progress_bar
 from tools.sleep import sleep
 from tools.file import cleardir
-import multiprocessing
+from multiprocessing import Process,Queue,Pool,Manager
+from threading import Thread
+import multiprocessing as mp
 
-
-# 爬取一个排行榜的信息
-def chart_spider(chart_id):
+def init():
+    cleardir(r'data/info')
+    cleardir(r'data/song_comments')
+    cleardir(r'data/playlist_comments')
     
-    trackIds = get_playlist_info(chart_id)     # 爬取排行榜的基本信息
-
-    users = get_playlist_comments(chart_id)     # 爬取排行榜的评论
-    
-    for song_id in trackIds:  # 遍历该排行榜中的所有歌曲
-        
-        singer_id = get_song_info(song_id)   # 爬取歌曲基本信息
-
-        get_singer_info(singer_id)           # 爬取歌手基本信息
-
-        users += get_song_comments(song_id)           # 爬取歌曲评论
-        
-    print("\t正在爬取与本排行榜相关的用户信息...")
-
-    users = list(set(users))    # 用户去重
-    for i in range(0, len(users)):
-        
-        get_user_info(users[i])
-        if ((i+1) % 100 == 0 or i == len(users)-1):
-            progress_bar(i+1, len(users))
-            sleep()
-
-
-if __name__=="__main__":
-
-    cleardir(r'data\info')
-    # cleardir(r'data\song_comments')
-    # cleardir(r'data\playlist_comments')
-
     # add_header(file_info_paths['playlist'], file_headers['playlist'])
     # add_header(file_info_paths['song'], file_headers['song'])
     # add_header(file_info_paths['singer'], file_headers['singer'])
     # add_header(file_info_paths['user'], file_headers['user'])
+    
+def anauser(user_id,i,size):
+    get_user_info(user_id)
+    if ((i+1) % 10 == 0 or i ==size-1):
+        progress_bar(i+1,size)
+        sleep()
 
-    pool = multiprocessing.Pool(processes=4)
-    for chart_id in Music_charts.values():   # 遍历每个排行榜
+def anasong(track_id,i,size,q):
+    print(f"\t\t单曲idx:{i+1}/{size}")
+        
+    singer_id = get_song_info(track_id)   # 爬取歌曲基本信息
 
-        pool.apply_async(chart_spider, (chart_id,))
+    get_singer_info(singer_id)           # 爬取歌手基本信息
 
-    pool.close()
-    pool.join()     # 等待子线程结束
+    tmp_users = get_song_comments(track_id)           # 爬取歌曲评论
+    # 取每首歌的前10个用户
+    tmp_users = tmp_users[0:10] if len(tmp_users)>=10 else tmp_users
+    q.put(tmp_users)
+    
+def analist(chart_id):
+    trackIds = get_playlist_info(chart_id)     # 爬取排行榜的基本信息
+
+    users = get_playlist_comments(chart_id)     # 爬取排行榜的评论
+    # 取每个歌单的前20个用户
+    users = users[0:20] if len(users)>=20 else users
+    print(f"\n=====从歌单中取出{len(users)}个用户====\n")
+
+    tracks = []
+    # queue = [Queue() for i in range(len(trackIds))]
+    # 不限制进程数量
+    # for i in range(0,len(trackIds)):  # 遍历该排行榜中的所有歌曲
+    #     q = queue[i]
+    #     track = Process(target=anasong,args=(trackIds[i],i,len(trackIds),q))
+    #     track.start()
+    #     tracks.append(track)
+
+    # for p in tracks:
+    #     p.join()
+    
+    # 设置进程数量限制
+    queue = [Manager().Queue() for i in range(len(trackIds))]
+    pool_songs = Pool(processes=4)
+    size_t = [len(trackIds) for i in range(len(trackIds))]
+    params_songs = zip(trackIds,range(len(trackIds)),size_t,queue)
+    # print (list(params))
+    
+    # # 异步并发，效果更佳，但CPU招架不住
+    # pool_songs.starmap_async(anasong,params_songs)
+    # 同步
+    pool_songs.starmap(anasong,params_songs)
+    # 先关闭进程池
+    pool_songs.close()
+    pool_songs.join()
+    
+    for i in range(len(queue)):
+        users += queue[i].get()
+        # print(f"===Now the size is {len(users)}")
+    
+    # Light对于每个歌单只取20*1+10*10个用户
+    users = list(set(users))
+    # print(f"\n\n{users}\n\n")
+    print("\t正在爬取与本排行榜相关的用户信息...")
+    
+    # # 单开
+    # for i in range(0,len(users)):
+    #     anauser(users[i],i,len(users))
+    
+    # # 不限制进程数量
+    # users_process = []
+    # for i in range(0,len(users)):
+    #     sleep()
+    #     uid = users[i]
+    #     print(uid)
+    #     us = Process(target=anauser,args=(uid,i,len(users)))
+    #     users_process.append(us)
+    #     us.start()
+    # for us in users_process:
+    #     us.join()
+        
+    # 设置进程数量限制
+    pool_users = Pool(processes=4)
+    size = [len(users) for i in range(len(users))]
+    params = zip(users,range(len(users)),size)
+    # print (list(params))
+    # # 异步并发，效果更佳，但CPU招架不住
+    # pool_users.starmap_async(anauser,params)
+    pool_users.starmap(anauser,params)
+    pool_users.close()
+    pool_songs.join()
+    return
+
+# 爬取一个排行榜的信息
+def chart_spider(chart_id):
+    
+    init()
+    # pool = mp.Pool()
+    # pool.map(analist,Music_charts.values())
+    
+    for chart_id in Music_charts.values():
+        
+        pl = Process(target=analist,args={chart_id})
+        pl.start()
+   

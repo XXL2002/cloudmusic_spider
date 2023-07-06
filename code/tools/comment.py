@@ -3,6 +3,7 @@ sys.path.append("code")
 
 from tools.file import save_csv
 # from tools.utils import timestamp2date
+# from user.get_user_info import get_user_info
 
 # 从json中提取热评
 def hotcomments(content_json, filepath): 

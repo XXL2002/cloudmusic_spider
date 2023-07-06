@@ -1,6 +1,7 @@
 # coding='utf-8'
 
 import sys
+import os
 sys.path.append("code")
 import os
 from tools.struct import city_dic
@@ -18,11 +19,14 @@ def get_user_info(user_id):
     '''
         获取用户基本信息
     '''
-    
+    print(f"\t\t正在爬取用户{user_id}的基本信息...")
     data = {}
     url = f'https://music.163.com/api/v1/user/detail/{user_id}'
 
     content_json = get(url)
+    
+    # 用户ID
+    data['user_id'] = user_id
 
     # 用户名
     data['nickname'] = content_json['profile']['nickname']
@@ -54,7 +58,9 @@ def get_user_info(user_id):
     data['listenSongs'] = content_json['listenSongs']
 
     # 获取用户近一周听歌排行(10首)
+    print("\t\t正在爬取TA的听歌情况...")
     alldatalist, weeklist = get_user_listen_rank(user_id)
+
     if alldatalist != []:
         data['all_rank'] = list2str(alldatalist)
     else:
@@ -76,8 +82,28 @@ def get_user_info(user_id):
         data['collect_play'] = list2str(collect_playlists)
     else:
         data['collect_play'] = 'null'
-
+        
     save_csv(file_info_paths['user'], data)
+    
+    print("\t\t正在爬取TA的听歌总榜...")
+    for i in range(0,len(alldatalist)):
+        print(f"总榜{i+1}/{len(alldatalist)}")
+        filepath = f"data/song_comments/song_{alldatalist[i]}.txt"
+        if os.path.exists(filepath):    # 这首歌已经爬取过数据
+            continue
+        get_song_info(alldatalist[i])
+        get_song_comments(alldatalist[i])
+    print("\t\t正在爬取TA的听歌周榜...")
+    for i in range(0,len(weeklist)):
+        print(f"周榜{i+1}/{len(weeklist)}")
+        filepath = f"data/song_comments/song_{weeklist[i]}.txt"
+        if os.path.exists(filepath):    # 这首歌已经爬取过数据
+            continue
+        get_song_info(weeklist[i])
+        get_song_comments(weeklist[i])
+
+
+    # save_csv(file_info_paths['user'], data)
 
     
     for song_id in alldatalist:

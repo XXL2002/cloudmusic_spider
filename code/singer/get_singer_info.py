@@ -11,10 +11,15 @@ def get_singer_info(singer_id):
     '''
     获取指定歌手的基本信息
     '''
+    if singer_id == -1:
+        return
     
     url = f'http://music.163.com/api/artist/{singer_id}'
     data = {}
     content_json = get(url)
+    
+    if content_json is None:
+        return
 
     # 歌手ID
     data['singer_id'] = singer_id
@@ -47,7 +52,7 @@ def get_singer_info(singer_id):
 
     save_csv(file_info_paths['singer'], data)
 
-    return data
+    return
 
 
 if __name__=="__main__":

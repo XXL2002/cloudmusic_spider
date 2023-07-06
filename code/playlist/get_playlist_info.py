@@ -16,6 +16,9 @@ def get_playlist_info(playlistid):
 
     content_json = get(url)
 
+    if content_json is None:
+        return []
+    
     # 歌单ID
     data['playlist_id'] = content_json['playlist']['id']
     
@@ -44,6 +47,7 @@ def get_playlist_info(playlistid):
     
     # 歌曲id列表
     ids = [track['id'] for track in content_json['playlist']['trackIds']]
+    ids = ids[0:10] if len(ids)>=10 else ids
     data['trackIds'] = list2str(ids)
 
     save_csv(file_info_paths['playlist'], data)

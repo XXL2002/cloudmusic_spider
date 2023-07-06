@@ -40,7 +40,7 @@ def get_playlist_info(playlistid):
     else:
         data['tags'] = 'null'
 
-    print(data['tags'])
+    
 
     # 创建者ID
     data['creator'] = content_json['playlist']['creator']['userId']

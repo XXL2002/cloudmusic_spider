@@ -12,7 +12,7 @@ from user.get_user_info import get_user_info
 from tools.progressBar import progress_bar
 from tools.sleep import sleep
 from tools.file import cleardir
-from multiprocessing import Process,Queue,Pool,Manager
+from multiprocessing import Process,Queue,Pool,Manager,Semaphore
 from threading import Thread
 import multiprocessing as mp
 
@@ -44,7 +44,10 @@ def anasong(track_id,i,size,q):
     tmp_users = tmp_users[0:10] if len(tmp_users)>=10 else tmp_users
     q.put(tmp_users)
     
-def analist(chart_id):
+def analist(chart_id,sem):
+    # 占用信号量
+    sem.acquire()
+    
     trackIds = get_playlist_info(chart_id)     # 爬取排行榜的基本信息
 
     users = get_playlist_comments(chart_id)     # 爬取排行榜的评论
@@ -114,6 +117,9 @@ def analist(chart_id):
     pool_users.starmap(anauser,params)
     pool_users.close()
     pool_songs.join()
+    
+    # 释放信号量
+    sem.release()
     return
 
 if __name__ == "__main__":    
@@ -121,8 +127,10 @@ if __name__ == "__main__":
     # pool = mp.Pool()
     # pool.map(analist,Music_charts.values())
     
+    # 最大一级子进程信号量
+    maxSem = Semaphore(4)
     for chart_id in Music_charts.values():
         
-        pl = Process(target=analist,args={chart_id})
+        pl = Process(target=analist,args=(chart_id,maxSem))
         pl.start()
    

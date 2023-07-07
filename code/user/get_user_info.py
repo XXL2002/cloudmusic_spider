@@ -124,7 +124,7 @@ def get_user_info(user_id):
             continue
         singer_id = get_song_info(song_id)
         get_song_comments(song_id)
-        get_singer_id(singer_id)
+        get_singer_info(singer_id)
 
 
     # return data

@@ -2,6 +2,7 @@
 
 import sys
 sys.path.append("code")
+from song.get_song_info import get_song_info
 from tools.file import save_csv
 from tools.request import get
 from tools.struct import file_info_paths
@@ -51,6 +52,10 @@ def get_singer_info(singer_id):
     data['hotsongs'] = list2str(hotSongs)
 
     save_csv(file_info_paths['singer'], data)
+    
+    # 爬取该歌手热门歌曲的基本信息
+    for song in hotSongs:
+        get_song_info(song)
 
     return
 

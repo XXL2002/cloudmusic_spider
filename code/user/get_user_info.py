@@ -14,6 +14,7 @@ from user.get_user_playlist import get_user_playlist
 from tools.utils import list2str
 from song.get_song_info import get_song_info
 from song.get_song_comments import get_song_comments
+from singer.get_singer_info import get_singer_info
 
 def get_user_info(user_id):
     '''
@@ -113,15 +114,17 @@ def get_user_info(user_id):
         filepath = f"data/song_comments/song_{song_id}.txt"
         if os.path.exists(filepath):    # 这首歌已经爬取过数据
             continue
-        get_song_info(song_id)
+        singer_id = get_song_info(song_id)
         get_song_comments(song_id)
+        get_singer_info(singer_id)
 
     for song_id in weeklist:
         filepath = f"data/song_comments/song_{song_id}.txt"
         if os.path.exists(filepath):    # 这首歌已经爬取过数据
             continue
-        get_song_info(song_id)
+        singer_id = get_song_info(song_id)
         get_song_comments(song_id)
+        get_singer_id(singer_id)
 
 
     # return data

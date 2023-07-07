@@ -47,8 +47,9 @@ def get_song_comments(songid):
     print("\t\t总共有{}页{}条评论\n".format(pages, total))
 
     users = []
-    users += hotcomments(content_json, filepath)
-    users += comments(content_json, filepath)
+    # double check
+    users += hotcomments(content_json, filepath) if content_json is not None else []
+    users += comments(content_json, filepath) if content_json is not None else []
 
     # 开始获取歌曲的全部评论
     page = 1
@@ -63,7 +64,8 @@ def get_song_comments(songid):
         content_json = get(url)
 
         # 从第二页开始获取评论
-        users += comments(content_json, filepath)
+        # double check
+        users += comments(content_json, filepath) if content_json is not None else []
         page += 1
 
 

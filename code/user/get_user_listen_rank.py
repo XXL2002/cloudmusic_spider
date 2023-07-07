@@ -20,6 +20,7 @@ def get_user_listen_rank(user_id):
 
     if(content_json is None):
         return alldatalist, weeklist
+    
     i = j = 0
 
     for item in content_json['allData']:

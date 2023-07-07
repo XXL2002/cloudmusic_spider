@@ -25,6 +25,9 @@ def get_user_info(user_id):
 
     content_json = get(url)
     
+    if content_json is None:
+        return
+    
     # 用户ID
     data['user_id'] = user_id
 

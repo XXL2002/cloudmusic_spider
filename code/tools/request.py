@@ -26,10 +26,10 @@ def get(url):
 # post请求
 def post(url, data):
 
-    response = requests.post(url, headers=get_header(), data=data)
-    content_json = response.json()
-
     try:
+        response = requests.post(url, headers=get_header(), data=data)
+        content_json = response.json()
+
         if content_json['code'] == 200:
 
             response.close()

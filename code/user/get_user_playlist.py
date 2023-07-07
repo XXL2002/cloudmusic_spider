@@ -14,6 +14,9 @@ def get_user_playlist(user_name, user_id):
 
     create_playlists = []   # 该用户创建的歌单
     collect_playlists = []  # 该用户收藏的歌单
+    
+    if content_json is None:
+        return create_playlists,collect_playlists
 
     # 遍历歌单
     for playlist in content_json['playlist']:

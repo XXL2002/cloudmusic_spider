@@ -32,8 +32,11 @@ def get_playlist_info(playlistid):
     data['subscribedCount'] = content_json['playlist']['subscribedCount']
     
     # 歌单描述
-    data['description'] = content_json['playlist']['description'].replace("\n", "")
-
+    if content_json['playlist']['description'] != None:
+        data['description'] = content_json['playlist']['description'].replace("\n", "")
+    else:
+        data['description'] = 'null'
+        
     # 歌单标签
     if content_json['playlist']['tags'] != []:
         data['tags'] = ' '.join(content_json['playlist']['tags'])

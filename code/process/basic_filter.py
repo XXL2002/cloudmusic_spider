@@ -36,6 +36,28 @@ def new_dir(client, new_data_path):
     create_dir(client, new_song_comments_path)
 
 
+# 对歌手信息文件进行清洗
+def singer_info_filter(rdd, filepath):
+
+    # 去重、去除列数不为5
+    rdd.distinct() \
+        .map(lambda line: line.split(' @#$#@ ')) \
+        .filter(lambda list: len(list) == 5) \
+        .map(lambda list: ' @#$#@ '.join(list)) \
+        .saveAsTextFile(filepath)
+
+
+# 对歌单信息文件进行清洗
+def playlist_info_filter(rdd, filepath):
+
+    # 去重、去除列数不为8
+    rdd.distinct() \
+        .map(lambda line: line.split(' @#$#@ ')) \
+        .filter(lambda list: len(list) == 8) \
+        .map(lambda list: ' @#$#@ '.join(list)) \
+        .saveAsTextFile(filepath)
+
+
 # 对用户信息文件进行清洗
 def user_info_filter(rdd, filepath):
 
@@ -82,21 +104,26 @@ if __name__ == '__main__':
 
     print('开始清洗...')
 
+    # 清洗歌单信息文件
+    rdd1 = sc.textFile('hdfs://stu:9000/data/info/playlist_info.txt')
+    filepath1 = '/basic_data/info/playlist_info.txt'
+    playlist_info_filter(rdd1, filepath1)
+
+    # 清洗歌手信息文件
+    rdd2 = sc.textFile('hdfs://stu:9000/data/info/singer_info.txt')
+    filepath2 = '/basic_data/info/singer_info.txt'
+    singer_info_filter(rdd2, filepath2)
+
     # 清洗用户信息文件
-    rdd1 = sc.textFile('hdfs://stu:9000/data/info/user_info.txt')
-    filepath1 = '/basic_data/info/user_info.txt'
-    user_info_filter(rdd1, filepath1)
+    rdd3 = sc.textFile('hdfs://stu:9000/data/info/user_info.txt')
+    filepath3 = '/basic_data/info/user_info.txt'
+    user_info_filter(rdd3, filepath3)
     
     # 清洗歌曲信息文件
-    rdd2 = sc.textFile('hdfs://stu:9000/data/info/song_info.txt')
-    filepath2 = '/basic_data/info/song_info.txt'
-    song_info_filter(rdd2, filepath2)
-    
-    # 拷贝歌单信息文件
-    client.copy('/data/info/playlist_info.txt', '/basic_data/info/playlist_info.txt')
+    rdd4 = sc.textFile('hdfs://stu:9000/data/info/song_info.txt')
+    filepath4 = '/basic_data/info/song_info.txt'
+    song_info_filter(rdd4, filepath4)
 
-    # 拷贝歌手信息文件
-    client.copy('/data/info/singer_info.txt', '/basic_data/info/singer_info.txt')
 
     playlist_files = client.listdir('/data/playlist_comments/')
     playlist_paths = ['/basic_data/playlist_comments/' + file for file in playlist_files]

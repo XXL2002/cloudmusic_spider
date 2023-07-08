@@ -113,7 +113,7 @@ Music_charts = {
 
 # 文件头
 file_headers = {
-    'song': ["song_id", "song_name", "singer_id", "singer_name", "album", "lyric"],
+    'song': ["song_id", "song_name", "singer_id", "singer_name", "album", "lyric", "total"],
     'singer': ["singer_id", "singer_name", "accountId", "fans", "hotsongs"],
     'playlist': ["playlist_id", "playlist_name", "playCount", "subscribedCount", "description", "tags", "creator", "trackIds"],
     'comment': ["user_id", "user_name", "comment_id", "comment", "likecount", "location"],

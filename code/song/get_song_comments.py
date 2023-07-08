@@ -75,7 +75,7 @@ def get_song_comments(songid):
         sleep()
     
     print("爬取结束!")
-    return users
+    return users, total
 
 
 

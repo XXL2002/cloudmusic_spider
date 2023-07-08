@@ -2,10 +2,8 @@
 
 import sys
 sys.path.append("code")
-from tools.file import save_csv
 from tools.request import get
 from song.get_song_lyric import get_song_lyric
-from tools.struct import file_info_paths
 
 
 def get_song_info(songid):
@@ -40,9 +38,7 @@ def get_song_info(songid):
         # 获取歌词
         data['lyric'] = get_song_lyric(songid)
         
-        save_csv(file_info_paths['song'], data)
-        
-        return data['singer_id']
+        return data
 
 
 if __name__ == "__main__":

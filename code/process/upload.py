@@ -7,11 +7,12 @@ def create_dir(client, dir_path):
         client.delete(dir_path, recursive=True)
     client.mkdirs(dir_path)
 
+
 if __name__=="__main__":
 
     client = HdfsClient(hosts='stu:50070', user_name='root')
 
-    path = '/home/cloudmusic_spider/data/'
+    path = '/home/cloudmusic_spider/data/'  # 本机目录
     remote_path = '/data/'
 
     info_path = path + 'info/'  # info目录路径

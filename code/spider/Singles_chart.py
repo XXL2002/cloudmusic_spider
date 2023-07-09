@@ -1,5 +1,6 @@
 from itertools import zip_longest
 import sys
+import time
 sys.path.append("code")
 from tools.struct import Music_charts, file_headers, file_info_paths
 from tools.file import add_header
@@ -15,8 +16,6 @@ from tools.file import cleardir
 from multiprocessing import Process,Queue,Pool,Manager,Semaphore
 from threading import Thread
 import multiprocessing as mp
-from tools.file import save_csv
-from tools.struct import file_info_paths
 
 
 def init():
@@ -37,15 +36,12 @@ def anauser(user_id,i,size):
 
 def anasong(track_id,i,size,q):
     print(f"\t\t单曲idx:{i+1}/{size}")
-        
-    data = get_song_info(track_id)   # 爬取歌曲基本信息
-
-    get_singer_info(data['singer_id'])           # 爬取歌手基本信息
-
+    
     tmp_users, total = get_song_comments(track_id)           # 爬取歌曲评论
-    data['total'] = total
 
-    save_csv(file_info_paths['song'], data)
+    singer_id = get_song_info(track_id, total)   # 爬取歌曲基本信息
+
+    get_singer_info(singer_id)           # 爬取歌手基本信息
 
     # 取每首歌的前10个用户
     tmp_users = tmp_users[0:10] if len(tmp_users)>=10 else tmp_users
@@ -55,9 +51,10 @@ def analist(chart_id,sem):
     # 占用信号量
     sem.acquire()
     
-    trackIds = get_playlist_info(chart_id)     # 爬取排行榜的基本信息
+    users, total = get_playlist_comments(chart_id)     # 爬取排行榜的评论
 
-    users = get_playlist_comments(chart_id)     # 爬取排行榜的评论
+    trackIds = get_playlist_info(chart_id, total)     # 爬取排行榜的基本信息
+
     # 取每个歌单的前20个用户
     users = users[0:20] if len(users)>=20 else users
     print(f"\n=====从歌单中取出{len(users)}个用户====\n")
@@ -76,7 +73,7 @@ def analist(chart_id,sem):
     
     # 设置进程数量限制
     queue = [Manager().Queue() for i in range(len(trackIds))]
-    pool_songs = Pool(processes=2)
+    pool_songs = Pool(processes=4)
     size_t = [len(trackIds) for i in range(len(trackIds))]
     params_songs = zip(trackIds,range(len(trackIds)),size_t,queue)
     # print (list(params))
@@ -115,7 +112,7 @@ def analist(chart_id,sem):
     #     us.join()
         
     # 设置进程数量限制
-    pool_users = Pool(processes=2)
+    pool_users = Pool(processes=4)
     size = [len(users) for i in range(len(users))]
     params = zip(users,range(len(users)),size)
     # print (list(params))
@@ -135,9 +132,10 @@ if __name__ == "__main__":
     # pool.map(analist,Music_charts.values())
     
     # 最大一级子进程信号量
-    maxSem = Semaphore(3)
+    maxSem = Semaphore(4)
     for chart_id in Music_charts.values():
         
         pl = Process(target=analist,args=(chart_id,maxSem))
         pl.start()
+        time.sleep(2)
    

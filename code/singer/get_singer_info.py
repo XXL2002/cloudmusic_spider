@@ -3,6 +3,7 @@
 import sys
 sys.path.append("code")
 from song.get_song_info import get_song_info
+from song.get_song_comments import get_song_comments
 from tools.file import save_csv
 from tools.request import get
 from tools.struct import file_info_paths
@@ -55,7 +56,8 @@ def get_singer_info(singer_id):
     
     # 爬取该歌手热门歌曲的基本信息
     for song in hotSongs:
-        get_song_info(song)
+        user, total = get_song_comments(song)
+        get_song_info(song, total)
 
     return
 

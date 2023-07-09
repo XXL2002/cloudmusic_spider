@@ -95,36 +95,36 @@ def get_user_info(user_id):
         filepath = f"data/song_comments/song_{alldatalist[i]}.txt"
         if os.path.exists(filepath):    # 这首歌已经爬取过数据
             continue
-        get_song_info(alldatalist[i])
-        get_song_comments(alldatalist[i])
+        users, total = get_song_comments(alldatalist[i])
+        get_song_info(alldatalist[i], total)
     print("\t\t正在爬取TA的听歌周榜...")
     for i in range(0,len(weeklist)):
         print(f"周榜{i+1}/{len(weeklist)}")
         filepath = f"data/song_comments/song_{weeklist[i]}.txt"
         if os.path.exists(filepath):    # 这首歌已经爬取过数据
             continue
-        get_song_info(weeklist[i])
-        get_song_comments(weeklist[i])
+        users, total = get_song_comments(weeklist[i])
+        get_song_info(weeklist[i], total)
 
 
     # save_csv(file_info_paths['user'], data)
 
     
-    for song_id in alldatalist:
-        filepath = f"data/song_comments/song_{song_id}.txt"
-        if os.path.exists(filepath):    # 这首歌已经爬取过数据
-            continue
-        singer_id = get_song_info(song_id)
-        get_song_comments(song_id)
-        get_singer_info(singer_id)
+    # for song_id in alldatalist:
+    #     filepath = f"data/song_comments/song_{song_id}.txt"
+    #     if os.path.exists(filepath):    # 这首歌已经爬取过数据
+    #         continue
+    #     singer_id = get_song_info(song_id)
+    #     get_song_comments(song_id)
+    #     get_singer_info(singer_id)
 
-    for song_id in weeklist:
-        filepath = f"data/song_comments/song_{song_id}.txt"
-        if os.path.exists(filepath):    # 这首歌已经爬取过数据
-            continue
-        singer_id = get_song_info(song_id)
-        get_song_comments(song_id)
-        get_singer_info(singer_id)
+    # for song_id in weeklist:
+    #     filepath = f"data/song_comments/song_{song_id}.txt"
+    #     if os.path.exists(filepath):    # 这首歌已经爬取过数据
+    #         continue
+    #     singer_id = get_song_info(song_id)
+    #     get_song_comments(song_id)
+    #     get_singer_info(singer_id)
 
 
     # return data

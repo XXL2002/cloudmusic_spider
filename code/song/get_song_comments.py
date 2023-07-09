@@ -22,7 +22,7 @@ def get_song_comments(songid):
     filepath = f"data/song_comments/{filename}.txt"
 
     if os.path.exists(filepath):
-        return []
+        return [], 'null'
 
     # add_header(filepath, file_headers['comment'])
 
@@ -36,7 +36,7 @@ def get_song_comments(songid):
     content_json = get(url)
     
     if content_json is None:
-        return []
+        return [], 'null'
     
     # 评论总数
     total = content_json['total']

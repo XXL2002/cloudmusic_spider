@@ -6,7 +6,7 @@ from tools.file import save_csv
 from tools.request import get
 from tools.utils import list2str
 
-def get_playlist_info(playlistid):
+def get_playlist_info(playlistid, total):
     '''
         获取指定歌单的基本信息
     '''
@@ -53,9 +53,12 @@ def get_playlist_info(playlistid):
     ids = ids[0:10] if len(ids)>=10 else ids
     data['trackIds'] = list2str(ids)
 
+    # 评论数
+    data['total'] = total
+
     save_csv(file_info_paths['playlist'], data)
     
-    return ids[0:10]    # 只分析前十首歌
+    return ids    # 只分析前十首歌
     
 
 

@@ -4,9 +4,11 @@ import sys
 sys.path.append("code")
 from tools.request import get
 from song.get_song_lyric import get_song_lyric
+from tools.file import save_csv
+from tools.struct import file_info_paths
 
 
-def get_song_info(songid):
+def get_song_info(songid, total):
     '''
         获取歌曲基本信息
     '''
@@ -38,7 +40,14 @@ def get_song_info(songid):
         # 获取歌词
         data['lyric'] = get_song_lyric(songid)
         
-        return data
+        # 评论数
+        data['total'] = total
+        
+        save_csv(file_info_paths['song'], data)
+
+        return data['singer_id']
+
+
 
 
 if __name__ == "__main__":

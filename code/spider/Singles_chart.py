@@ -43,19 +43,20 @@ def anasong(track_id,i,size,q):
 
     get_singer_info(singer_id)           # 爬取歌手基本信息
 
+    tmp_users = list(set(tmp_users))
+
     # 取每首歌的前10个用户
-    tmp_users = tmp_users[0:10] if len(tmp_users)>=10 else tmp_users
+    # tmp_users = tmp_users[0:10] if len(tmp_users)>=10 else tmp_users
+
     q.put(tmp_users)
     
-def analist(chart_id,sem):
+def analist(chart_id, sem):
     # 占用信号量
     sem.acquire()
     
     users, total = get_playlist_comments(chart_id)     # 爬取排行榜的评论
-
+    
     trackIds = get_playlist_info(chart_id, total)     # 爬取排行榜的基本信息
-
-    users = list(set(users))
 
     # 取每个歌单的前20个用户
     # users = users[0:20] if len(users)>=20 else users
@@ -137,7 +138,7 @@ if __name__ == "__main__":
     maxSem = Semaphore(4)
     for chart_id in Music_charts.values():
         
-        pl = Process(target=analist,args=(chart_id,maxSem))
+        time.sleep(10)
+        pl = Process(target=analist, args=(chart_id, maxSem))
         pl.start()
-        time.sleep(2)
    

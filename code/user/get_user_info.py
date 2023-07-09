@@ -97,6 +97,7 @@ def get_user_info(user_id):
             continue
         users, total = get_song_comments(alldatalist[i])
         get_song_info(alldatalist[i], total)
+        
     print("\t\t正在爬取TA的听歌周榜...")
     for i in range(0,len(weeklist)):
         print(f"周榜{i+1}/{len(weeklist)}")

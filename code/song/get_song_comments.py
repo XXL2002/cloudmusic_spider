@@ -55,7 +55,7 @@ def get_song_comments(songid):
     page = 1
 
     # 取size个页
-    size = 10
+    size = 20
     while page < pages and page < size:
         if(page == 1):
             progress_bar(page,min(pages,size))

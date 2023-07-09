@@ -11,6 +11,7 @@ def resetdir(path,clear = False): # local
         return
     os.mkdir(path)
     
+
 def create_dir(client, dir_path, clear = False):   # hdfs
     if client.exists(dir_path):
         if clear:
@@ -18,47 +19,43 @@ def create_dir(client, dir_path, clear = False):   # hdfs
         return
     client.mkdirs(dir_path)
     
+
 def custom_function(iterable):   
+
     # 创建HdfsClient对象
-    client = HdfsClient(hosts='xxlVM:50070', user_name='root')
+    client = HdfsClient(hosts='stu:50070', user_name='root')
     
-    # 对每个分区进行处理
-    processed_data = ""
-    
-    filename = iterable[0].split("/")[-1]
-    for line in iterable[1].split("\n"):
-        data = line.split(' @#$#@ ')
-        if len(data) == 6 and data[3] != '':
-            processed_data += ' @#$#@ '.join(data)
-            processed_data += "\n"
-            
-    # 写本地测试
-    local_dir = "/home/code/cloudmusic_spider/data/done/song_comments/"
-    local_path = local_dir + filename
-    resetdir(local_dir)
-    with open(local_path, 'w') as file:
-        file.write(processed_data)
-        file.close()
+    tmp = iterable[0].split("/")
+    dir, filename = tmp[-2], tmp[-1]    # 文件夹和文件名
+
+    processed_data = "\n".join([' @#$#@ '.join(line.split(' @#$#@ ')) for line in iterable[1].split("\n") if len(line.split(' @#$#@ ')) == 6 and line.split(' @#$#@ ')[3] != '']).encode()
     
     # 将处理后的数据存储回hdfs
-    hdfs_dir = "/new_data/song_comments/"
+    hdfs_dir = f"/new_data/{dir}/"
     hdfs_path = hdfs_dir + filename
-    create_dir(client,hdfs_dir)
-    client.copy_from_local(local_path,hdfs_path)
+    create_dir(client, hdfs_dir)
+    client.create(hdfs_path, data=processed_data)
+
     
 
 if __name__ == '__main__':
     conf = SparkConf().setAppName("CustomFunctionExample")
     sc = SparkContext(conf=conf)
     
-    # 重置本地及hdfs的相关文件夹
-    resetdir("/home/code/cloudmusic_spider/data/done/song_comments/",True)
-    client = HdfsClient(hosts='xxlVM:50070', user_name='root')
+    # 重置hdfs的相关文件夹
+    client = HdfsClient(hosts='stu:50070', user_name='root')
+
     create_dir(client,"/new_data/song_comments/",True)
 
     # 获取HDFS上指定路径下的所有文件
-    hdfs_path = "hdfs://xxlVM:9000/data/song_comments/"
-    file_list = sc.wholeTextFiles(hdfs_path)
-    file_list.foreach(custom_function)
+    hdfs_path1 = "hdfs://stu:9000/data/playlist_comments/"
+    file_list1 = sc.wholeTextFiles(hdfs_path1)
+
+    hdfs_path2 = "hdfs://stu:9000/data/song_comments/"
+    file_list2 = sc.wholeTextFiles(hdfs_path2)
+
+    combined_filelist = file_list1.union(file_list2)
+    combined_filelist.foreach(custom_function)
+    
 
     sc.stop()

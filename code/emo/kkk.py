@@ -39,6 +39,24 @@ def score_lyr(lyr):
     return(str(score))
 
 
+def score_comment(id):
+    song_comment_filename="hdfs://fwt:9000/song_"+id
+    # song_comment_filename="wyy\emo\data\song_comments\song_2059815659.txt"  
+    score2=0
+    count=0
+    try:
+        read_comments=open(song_comment_filename, 'r', encoding="UTF-8")
+        for line1 in read_comments:
+            depart_comment=line1.split(" @#$#@ ")
+            if(len(depart_comment)==1):
+                continue
+            s=SnowNLP(depart_comment[3])
+            score2=score2+s.sentiments
+            count=count+1
+        score2=score2/count
+    except:
+        score2=0.0
+
 def score_total(id,lyr):
     score1 = score_lyr(lyr)
     score2 = score_comment(id)
@@ -83,7 +101,7 @@ def score_song(song_id):
     score_lyr,score_com=score_total(song_id,spark.sql("select lyr from t_table where t_table.songid="+str(song_id)))
     return score_com*0.5+score_lyr*0.5
     
-    
+
     # lines_song_info=lines.distinct()\
     #                         .map(lambda line: line.split(" @#$#@ "))\
     #                         .map(lambda list: [list[0],list[1],list[5]])\

@@ -55,8 +55,10 @@ def analist(chart_id,sem):
 
     trackIds = get_playlist_info(chart_id, total)     # 爬取排行榜的基本信息
 
+    users = list(set(users))
+
     # 取每个歌单的前20个用户
-    users = users[0:20] if len(users)>=20 else users
+    # users = users[0:20] if len(users)>=20 else users
     print(f"\n=====从歌单中取出{len(users)}个用户====\n")
 
     tracks = []

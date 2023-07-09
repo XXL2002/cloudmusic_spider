@@ -46,8 +46,8 @@ def get_playlist_comments(playlistid):
 
     users = []
     # double check
-    users += hotcomments(content_json, filepath) if content_json is not None else []
-    users += comments(content_json, filepath) if content_json is not None else []
+    users += hotcomments(content_json, filepath)
+    users += comments(content_json, filepath)
 
     # 开始获取歌曲的全部评论
     page = 1
@@ -63,7 +63,7 @@ def get_playlist_comments(playlistid):
 
         # 从第二页开始获取评论
         # double check
-        users += comments(content_json, filepath) if content_json is not None else []
+        users += comments(content_json, filepath)
         page += 1
         
 

@@ -8,8 +8,6 @@ from tools.file import save_csv
 # 从json中提取热评
 def hotcomments(content_json, filepath): 
 
-    m = 1   # 记录第几条精彩评论
-    data = {}   # 存储数据
     users = []
 
     # 键在字典中则返回users, 否则返回[]
@@ -17,6 +15,8 @@ def hotcomments(content_json, filepath):
 
         # 遍历每一条热评
         for item in content_json['hotComments']:
+
+            data = {}   # 存储数据
 
             # 热评的用户
             user = item['user']
@@ -53,23 +53,21 @@ def hotcomments(content_json, filepath):
 
             # get_user_info(data['user_id'])  # 爬取用户信息
             users.append(data['user_id'])
-
-            m += 1
+            
         return users
+    
     return []
 
 
 # 从json提取普通评论
 def comments(content_json, filepath):
 
-    
-    # 全部评论
-    j = 1
-    data = {}
     users = []
     if "comments" in content_json:
         for item in content_json['comments']:
 
+            data = {}
+            
             # 发表评论的用户
             user = item['user']
 
@@ -107,6 +105,6 @@ def comments(content_json, filepath):
             # get_user_info(data['user_id'])  # 爬取用户信息
             users.append(data['user_id'])
 
-            j += 1
         return users
+    
     return []

@@ -1,7 +1,7 @@
-import re
 import jieba
 from pyhdfs import HdfsClient
 from pyspark import SparkConf, SparkContext
+
 
 # 读取停用词列表
 def stopwordslist():
@@ -60,31 +60,65 @@ def new_dir(client, new_data_path):
 
 
 # 对用户个人简介分词
-def signature_cut(rdd, filepath):
+def signature_cut(client, rdd, filepath):
 
-    rdd.map(lambda line: line.split(' @#$#@ ')) \
-        .map(lambda list: [list[i] if i != 5 else depart(list[i]) for i in range(len(list))]) \
-        .map(lambda list: ' @#$#@ '.join(list)) \
-        .saveAsTextFile(filepath)
+    tmp_list = rdd.map(lambda line: line.split(' @#$#@ ')) \
+                .map(lambda list: [list[i] if i != 5 else depart(list[i]) for i in range(len(list))]) \
+                .map(lambda list: ' @#$#@ '.join(list)) \
+                .collect()
+    
+    str = '\n'.join(tmp_list).encode()
 
+    client.create(filepath, data=str)
+    
 
 # 对歌曲歌词进行分词
-def lyric_cut(rdd, filepath):
+def lyric_cut(client, rdd, filepath):
 
-    rdd.map(lambda line: line.split(' @#$#@ ')) \
-        .map(lambda list: [list[i] if i != 5 else depart(list[i]) for i in range(len(list))]) \
-        .map(lambda list: ' @#$#@ '.join(list)) \
-        .saveAsTextFile(filepath)
+    tmp_list = rdd.map(lambda line: line.split(' @#$#@ ')) \
+                .map(lambda list: [list[i] if i != 5 else depart(list[i]) for i in range(len(list))]) \
+                .map(lambda list: ' @#$#@ '.join(list)) \
+                .collect()
+    
+    str = '\n'.join(tmp_list).encode()
+
+    client.create(filepath, data=str)
 
 
 # 对评论内容进行分词
-def comment_cut(rdd, filepath):
+# def comment_cut(client, rdd, filepath):
     
-    rdd.map(lambda line: line.split(' @#$#@ ')) \
-        .map(lambda list: [list[i] if i != 3 else depart(list[i]) for i in range(len(list))]) \
-        .filter(lambda list: list[3] != '') \
-        .map(lambda list: ' @#$#@ '.join(list)) \
-        .saveAsTextFile(filepath)
+#     tmp_list = rdd.map(lambda line: line.split(' @#$#@ ')) \
+#                 .map(lambda list: [list[i] if i != 3 else depart(list[i]) for i in range(len(list))]) \
+#                 .filter(lambda list: list[3] != '') \
+#                 .map(lambda list: ' @#$#@ '.join(list)) \
+#                 .collect()
+    
+#     str = '\n'.join(tmp_list).encode()
+
+#     client.create(filepath, data=str)
+
+
+def comment_cut(iterable):   
+
+    client = HdfsClient(hosts='stu:50070', user_name='root')
+
+    processed_data = ''
+
+    tmp = iterable[0].split("/")
+    dir, filename = tmp[-2], tmp[-1]
+    
+    for line in iterable[1].split("\n"):
+        list = line.split(' @#$#@ ')
+        list[3] = depart(list[3])
+        if list[3] != '':
+            processed_data += ' @#$#@ '.join(list)
+            processed_data += "\n"
+
+    # 将处理后的数据存储回hdfs
+    hdfs_path = f"/cut_data/{dir}/{filename}"
+
+    client.create(hdfs_path, data=processed_data.encode())
 
 
 
@@ -103,28 +137,34 @@ if __name__ == '__main__':
     # 用户简介分词
     rdd1 = sc.textFile('hdfs://stu:9000/basic_data/info/user_info.txt')
     filepath1 = '/cut_data/info/user_info.txt'
-    signature_cut(rdd1, filepath1)
+    signature_cut(client, rdd1, filepath1)
     
     # 歌曲歌词分词
     rdd2 = sc.textFile('hdfs://stu:9000/basic_data/info/song_info.txt')
     filepath2 = '/cut_data/info/song_info.txt'
-    lyric_cut(rdd2, filepath2)
+    lyric_cut(client, rdd2, filepath2)
     
-    playlist_files = client.listdir('/basic_data/playlist_comments/')
-    playlist_paths = ['/cut_data/playlist_comments/' + file for file in playlist_files]
-    playlist_rdds = [sc.textFile('hdfs://stu:9000/basic_data/playlist_comments/' + file) for file in playlist_files]
+    # playlist_files = client.listdir('/basic_data/playlist_comments/')
+    # playlist_paths = ['/cut_data/playlist_comments/' + file for file in playlist_files]
+    # playlist_rdds = [sc.textFile('hdfs://stu:9000/basic_data/playlist_comments/' + file) for file in playlist_files]
 
-    song_files = client.listdir('/basic_data/song_comments/')
-    song_paths = ['/cut_data/song_comments/' + file for file in song_files]
-    song_rdds = [sc.textFile('hdfs://stu:9000/basic_data/song_comments/' + file) for file in song_files]
+    # song_files = client.listdir('/basic_data/song_comments/')
+    # song_paths = ['/cut_data/song_comments/' + file for file in song_files]
+    # song_rdds = [sc.textFile('hdfs://stu:9000/basic_data/song_comments/' + file) for file in song_files]
 
-    # 歌单评论分词
-    for rdd, filepath in zip(playlist_rdds, playlist_paths):
-        comment_cut(rdd, filepath)
+    # # 歌单评论分词
+    # for rdd, filepath in zip(playlist_rdds, playlist_paths):
+    #     comment_cut(rdd, filepath)
 
-    # 歌曲评论分词
-    for rdd, filepath in zip(song_rdds, song_paths):
-        comment_cut(rdd, filepath)
+    # # 歌曲评论分词
+    # for rdd, filepath in zip(song_rdds, song_paths):
+    #     comment_cut(rdd, filepath)
+
+    file_list1 = sc.wholeTextFiles(r'hdfs://stu:9000/basic_data/playlist_comments')
+    file_list2 = sc.wholeTextFiles(r'hdfs://stu:9000/basic_data/song_comments/')
+    combined_list = file_list1.union(file_list2)
+    
+    combined_list.foreach(comment_cut)
 
     sc.stop()
 

@@ -162,7 +162,7 @@ if __name__ == '__main__':
     table_structure = cursor.fetchall()
     for column in table_structure:
         print(column)
-
+    
     cursor.close()
     connection.close()
 

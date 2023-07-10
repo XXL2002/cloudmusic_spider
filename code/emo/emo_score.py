@@ -268,7 +268,7 @@ def read_score(sc, hdfs_path1, hdfs_path2, hdfs_path3):
                 .collect()
     
     lyric_emo = {key:value for key, value in list3}
-
+    
     return playlist_comment_emo, song_comment_emo, lyric_emo
 
 

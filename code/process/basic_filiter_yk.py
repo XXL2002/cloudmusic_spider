@@ -70,10 +70,10 @@ def playlist_info_filter(client, rdd, filepath):
 # 对用户信息文件进行清洗
 def user_info_filter(client, rdd, filepath):
 
-    # 去重、去除列数不为11、不清洗个人简介为空的用户
+    # 去重、去除列数不为11、去除年龄不在范围内、不清洗个人简介为空的用户
     tmp_list = rdd.distinct() \
                 .map(lambda line: line.split(' @#$#@ ')) \
-                .filter(lambda list: len(list) == 11) \
+                .filter(lambda list: len(list) == 11 and 0 < int(list[3]) < 100) \
                 .map(lambda list: ' @#$#@ '.join(list)) \
                 .collect()
     

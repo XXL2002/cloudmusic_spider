@@ -1,3 +1,4 @@
+# -*- encoding:utf-8 -*-
 from snownlp import *
 # from pyspark import SparkConf, SparkContext
 # from pyhdfs import HdfsClient
@@ -191,27 +192,27 @@ def score_singers(sc, songs_emo_dict):
         .saveAsTextFile('hdfs://stu:9000/basic_data/info/test_singer_info.txt')
 
 
-# 计算歌单的emo指数
-def score_playlists(sc, ):
+# # 计算歌单的emo指数
+# def score_playlists(sc, ):
 
-    rdd = sc.textFile('hdfs://stu:9000/basic_data/info/playlist_info.txt')
+#     rdd = sc.textFile('hdfs://stu:9000/basic_data/info/playlist_info.txt')
 
-    rdd.map(lambda list: score_singer(list, songs_emo_dict)) \
-        .map(lambda list: ' @#$#@ '.join(list)) \
-        .saveAsTextFile('hdfs://stu:9000/basic_data/info/test_singer_info.txt')
+#     rdd.map(lambda list: score_singer(list, songs_emo_dict)) \
+#         .map(lambda list: ' @#$#@ '.join(list)) \
+#         .saveAsTextFile('hdfs://stu:9000/basic_data/info/test_singer_info.txt')
         
 
 
-def pys():
-    conf = SparkConf().setMaster("spark://fwt:7077").setAppName("job01")
-    sc = SparkContext(conf=conf)
-    lines=sc.textFile("hdfs://fwt:9000/song_info.txt")
-    # lines.distinct()\
-    lines_total = lines.map(lambda line: [line.split(" @#$#@ ")[0], line.split(" @#$#@ ")[5]]) \
-        .map(lambda x: score_total(str(x[0]), str(x[1])))\
-        .collect()
+# def pys():
+#     conf = SparkConf().setMaster("spark://fwt:7077").setAppName("job01")
+#     sc = SparkContext(conf=conf)
+#     lines=sc.textFile("hdfs://fwt:9000/song_info.txt")
+#     # lines.distinct()\
+#     lines_total = lines.map(lambda line: [line.split(" @#$#@ ")[0], line.split(" @#$#@ ")[5]]) \
+#         .map(lambda x: score_total(str(x[0]), str(x[1])))\
+#         .collect()
     
-    return lines_total
+#     return lines_total
 
 
 if __name__=="__main__":

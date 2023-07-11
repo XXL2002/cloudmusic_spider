@@ -69,7 +69,7 @@ def analist(chart_id, sem):
     # users = users[0:20] if len(users)>=20 else users
     print(f"\n=====从歌单中取出{len(users)}个用户====\n")
 
-    tracks = []
+    # tracks = []
     # queue = [Queue() for i in range(len(trackIds))]
     # 不限制进程数量
     # for i in range(0,len(trackIds)):  # 遍历该排行榜中的所有歌曲

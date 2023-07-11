@@ -1,4 +1,5 @@
 import re
+from tqdm import tqdm
 from pyhdfs import HdfsClient
 from pyspark import SparkConf, SparkContext
 
@@ -37,58 +38,79 @@ def new_dir(client, new_data_path):
 
 
 # 对歌手信息文件进行清洗
-def singer_info_filter(rdd, filepath):
+def singer_info_filter(client, rdd, filepath):
 
     # 去重、去除列数不为5
-    rdd.distinct() \
-        .map(lambda line: line.split(' @#$#@ ')) \
-        .filter(lambda list: len(list) == 5) \
-        .map(lambda list: ' @#$#@ '.join(list)) \
-        .saveAsTextFile(filepath)
+    tmp_list = rdd.distinct() \
+                .map(lambda line: line.split(' @#$#@ ')) \
+                .filter(lambda list: len(list) == 5) \
+                .map(lambda list: ' @#$#@ '.join(list)) \
+                .collect()
+    
+    str = '\n'.join(tmp_list).encode()
+
+    client.create(filepath, data=str)
 
 
 # 对歌单信息文件进行清洗
-def playlist_info_filter(rdd, filepath):
+def playlist_info_filter(client, rdd, filepath):
 
     # 去重、去除列数不为8
-    rdd.distinct() \
-        .map(lambda line: line.split(' @#$#@ ')) \
-        .filter(lambda list: len(list) == 8) \
-        .map(lambda list: ' @#$#@ '.join(list)) \
-        .saveAsTextFile(filepath)
+    tmp_list = rdd.distinct() \
+                .map(lambda line: line.split(' @#$#@ ')) \
+                .filter(lambda list: len(list) == 8) \
+                .map(lambda list: ' @#$#@ '.join(list)) \
+                .collect()
+    
+    str = '\n'.join(tmp_list).encode()
+
+    client.create(filepath, data=str)
 
 
 # 对用户信息文件进行清洗
-def user_info_filter(rdd, filepath):
+def user_info_filter(client, rdd, filepath):
 
-    # 去重、去除列数不为11、不清洗个人简介为空的用户
-    rdd.distinct() \
-        .map(lambda line: line.split(' @#$#@ ')) \
-        .filter(lambda list: len(list) == 11) \
-        .map(lambda list: ' @#$#@ '.join(list)) \
-        .saveAsTextFile(filepath)
+    # 去重、去除列数不为11、去除年龄不在范围内、不清洗个人简介为空的用户
+    tmp_list = rdd.distinct() \
+                .map(lambda line: line.split(' @#$#@ ')) \
+                .filter(lambda list: len(list) == 11 and 0 < int(list[3]) < 100) \
+                .map(lambda list: ' @#$#@ '.join(list)) \
+                .collect()
+    
+    str = '\n'.join(tmp_list).encode()
+
+    client.create(filepath, data=str)
 
 
 # 对歌曲信息文件进行清洗
-def song_info_filter(rdd, filepath):
+def song_info_filter(client, rdd, filepath):
 
     # 去重、去除列数不为6、去除歌词为空、去除歌词无关信息
-    rdd.distinct() \
-        .map(lambda line: line.split(' @#$#@ ')) \
-        .filter(lambda list: len(list) == 6 and list[5] != 'null') \
-        .map(lambda list: [list[i] if i != 5 else lyric_filter(list[i]) for i in range(len(list))]) \
-        .map(lambda list: ' @#$#@ '.join(list)) \
-        .saveAsTextFile(filepath)
+    tmp_list = rdd.distinct() \
+                .map(lambda line: line.split(' @#$#@ ')) \
+                .filter(lambda list: len(list) == 6 and list[5] != 'null') \
+                .map(lambda list: [list[i] if i != 5 else lyric_filter(list[i]) for i in range(len(list))]) \
+                .map(lambda list: ' @#$#@ '.join(list)) \
+                .collect()
+    
+    str = '\n'.join(tmp_list).encode()
+
+    client.create(filepath, data=str)
 
 
 # 对评论文件进行清洗
-def comment_filter(rdd, filepath):
+def comment_filter(client, rdd, filepath):
     
     # 去除列数不为6、以及评论为空的数据
-    rdd.map(lambda line: line.split(' @#$#@ ')) \
-        .filter(lambda list: len(list) == 6 and list[3] != '') \
-        .map(lambda list: ' @#$#@ '.join(list)) \
-        .saveAsTextFile(filepath)
+    tmp_list = rdd.map(lambda line: line.split(' @#$#@ ')) \
+            .filter(lambda list: len(list) == 6 and list[3] != '') \
+            .map(lambda list: ' @#$#@ '.join(list)) \
+            .collect()
+    
+    str = '\n'.join(tmp_list).encode()
+
+    client.create(filepath, data=str)
+        
 
 
 
@@ -107,22 +129,22 @@ if __name__ == '__main__':
     # 清洗歌单信息文件
     rdd1 = sc.textFile('hdfs://stu:9000/data/info/playlist_info.txt')
     filepath1 = '/basic_data/info/playlist_info.txt'
-    playlist_info_filter(rdd1, filepath1)
+    playlist_info_filter(client, rdd1, filepath1)
 
     # 清洗歌手信息文件
     rdd2 = sc.textFile('hdfs://stu:9000/data/info/singer_info.txt')
     filepath2 = '/basic_data/info/singer_info.txt'
-    singer_info_filter(rdd2, filepath2)
+    singer_info_filter(client, rdd2, filepath2)
 
     # 清洗用户信息文件
     rdd3 = sc.textFile('hdfs://stu:9000/data/info/user_info.txt')
     filepath3 = '/basic_data/info/user_info.txt'
-    user_info_filter(rdd3, filepath3)
+    user_info_filter(client, rdd3, filepath3)
     
     # 清洗歌曲信息文件
     rdd4 = sc.textFile('hdfs://stu:9000/data/info/song_info.txt')
     filepath4 = '/basic_data/info/song_info.txt'
-    song_info_filter(rdd4, filepath4)
+    song_info_filter(client, rdd4, filepath4)
 
 
     playlist_files = client.listdir('/data/playlist_comments/')
@@ -133,14 +155,18 @@ if __name__ == '__main__':
     song_paths = ['/basic_data/song_comments/' + file for file in song_files]
     song_rdds = [sc.textFile('hdfs://stu:9000/data/song_comments/' + file) for file in song_files]
 
+    total_length1 = len(playlist_rdds)
+
     # 清洗歌单评论文件
-    for rdd, filepath in zip(playlist_rdds, playlist_paths):
-        comment_filter(rdd, filepath)
+    for rdd, filepath in tqdm(zip(playlist_rdds, playlist_paths), total= total_length1, desc='歌单评论处理进度'):
+        comment_filter(client, rdd, filepath)
+    
+    total_length2 = len(song_rdds)
 
     # 清洗歌曲评论文件
-    for rdd, filepath in zip(song_rdds, song_paths):
-        comment_filter(rdd, filepath)
-
+    for rdd, filepath in tqdm(zip(song_rdds, song_paths), total= total_length2, desc='歌曲评论处理进度'):
+        comment_filter(client, rdd, filepath)
+    
     sc.stop()
 
     print('清洗结束')

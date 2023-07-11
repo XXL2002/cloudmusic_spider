@@ -17,6 +17,13 @@ from multiprocessing import Process,Queue,Pool,Manager,Semaphore
 from threading import Thread
 import multiprocessing as mp
 
+# 进程数量限制
+def limit_list():
+    return 3
+def limit_track():
+    return 4
+def limit_user():
+    return 4
 
 def init():
     cleardir(r'data/info')
@@ -76,7 +83,7 @@ def analist(chart_id, sem):
     
     # 设置进程数量限制
     queue = [Manager().Queue() for i in range(len(trackIds))]
-    pool_songs = Pool(processes=4)
+    pool_songs = Pool(processes=limit_track())
     size_t = [len(trackIds) for i in range(len(trackIds))]
     params_songs = zip(trackIds,range(len(trackIds)),size_t,queue)
     # print (list(params))
@@ -115,7 +122,7 @@ def analist(chart_id, sem):
     #     us.join()
         
     # 设置进程数量限制
-    pool_users = Pool(processes=4)
+    pool_users = Pool(processes=limit_user())
     size = [len(users) for i in range(len(users))]
     params = zip(users,range(len(users)),size)
     # print (list(params))
@@ -135,10 +142,10 @@ if __name__ == "__main__":
     # pool.map(analist,Music_charts.values())
     
     # 最大一级子进程信号量
-    maxSem = Semaphore(4)
+    maxSem = Semaphore(limit_list())
     for chart_id in Music_charts.values():
         
-        time.sleep(10)
+        time.sleep(7)
         pl = Process(target=analist, args=(chart_id, maxSem))
         pl.start()
    

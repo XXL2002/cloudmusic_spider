@@ -13,6 +13,7 @@ headers={
             'Referer': 'http://music.163.com/',
             'Upgrade-Insecure-Requests': '1',
             'User-Agent': "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/114.0.0.0 Safari/537.36"}
+
 # 使用随机User-Agent
 User_Agent = {0:"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/66.0.3359.181 Safari/537.36",
               1:"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/114.0.0.0 Safari/537.36",
@@ -21,6 +22,8 @@ User_Agent = {0:"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (K
             #   4:"Mozilla/5.0 (iPad; CPU OS 13_3 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) CriOS/87.0.4280.77 Mobile/15E148 Safari/604.1",
               2:"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/98.0.4758.82 Safari/537.36",
               }
+
+
 
 # 获取随机生成的请求头
 def get_header(idx = -1):
@@ -33,6 +36,7 @@ def get_header(idx = -1):
     # 改用fake_useragent
     headers['User-Agent'] = str(UserAgent().random)
     # print(headers['User-Agent'])
+
     return headers
 
 # 城市字典
@@ -121,11 +125,11 @@ Music_charts = {
 
 # 文件头
 file_headers = {
-    'song': ["song_id", "song_name", "singer_id", "singer_name", "album", "lyric", "total", "emo"],
+    'song': ["song_id", "song_name", "singer_id", "singer_name", "album", "lyric", "total", "tags", "emo"],
     'singer': ["singer_id", "singer_name", "accountId", "fans", "hotsongs", "emo"],
-    'playlist': ["playlist_id", "playlist_name", "playCount", "subscribedCount", "description", "tags", "creator", "trackIds", "total", "emo"],
+    'playlist': ["playlist_id", "playlist_name", "playCount", "subscribedCount", "description", "tags", "creator", "song_num", "trackIds", "total", "emo"],
     'comment': ["user_id", "user_name", "comment_id", "comment", "likecount", "location"],
-    'user': ["user_id","nickname", "gender", "age", "province", "signature", "listenSongs", "all_rank", "week_rank", "create_play", "collect_play", "emo"]
+    'user': ["user_id", "nickname", "gender", "age", "province", "signature", "listenSongs", "all_rank", "week_rank", "create_play", "collect_play", "emo"]
 }
 
 

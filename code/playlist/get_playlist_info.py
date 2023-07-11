@@ -50,8 +50,14 @@ def get_playlist_info(playlistid, total):
     
     # 歌曲id列表
     ids = [track['id'] for track in content_json['playlist']['trackIds']]
-    ids = ids[0:10] if len(ids)>=10 else ids
+
+    # 歌单收录音乐的数量
+    data['song_num'] = len(ids)
+
+    # 只记录前十首歌
+    ids = ids[:10] if len(ids)>=10 else ids
     data['trackIds'] = list2str(ids)
+
 
     # 评论数
     data['total'] = total

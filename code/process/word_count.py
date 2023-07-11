@@ -142,7 +142,7 @@ if __name__ == '__main__':
                                 user='root',
                                 password='12345678',
                                 db='visualData',
-                                port=51825,
+                                port=50919,
                                 charset='utf8')
 
 

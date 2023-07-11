@@ -2,90 +2,6 @@ from pyspark import SparkConf, SparkContext
 import pymysql
 from pyspark.sql import SparkSession
 from pyspark.sql.types import Row
-
-
-# 10 活跃用户emo指数年龄分布表(年龄段 age, 年龄段emo指数 aemo, 年龄段人数 enum)
-def userAge(filepath, connect):
-    '''
-      filepath: user_info.txt
-      db: 数据库连接
-    '''
-
-    conf = SparkConf().setMaster("spark://stu:7077").setAppName("job01")
-    sc = SparkContext(conf=conf)
-
-    rdd = sc.textFile(filepath)
-    
-    # 从用户信息表中取出age和emo指数
-    age_emo_list = rdd.distinct()\
-                      .map(lambda line: line.split(" @#$#@ ")) \
-                      .filter(lambda list: list[3] != 'null') \
-                      .map(lambda list: (int(list[3])//10, float(list[11]))) \
-                      .groupByKey() \
-                      .map(lambda x: (x[0], list(x[1]))) \
-                      .map(lambda x: (x[0], sum(x[1]) / len(x[1]), len(x[1]))) \
-                      .sortBy(lambda x: x[0]) \
-                      .collect()
-    
-    
-    cursor = connect.cursor(cursor = pymysql.cursors.DictCursor)
-    sql = "INSERT INTO userAge (age, aemo, enum) VALUES (%s, %s, %s)"
-
-    try:
-      cursor.executemany(sql, age_emo_list)
-      connect.commit()
-    except Exception as e:
-      print(e)
-      connect.rollback()
-    
-    sc.stop()
-    cursor.close()
-    connect.close()
-
-
-
-
-def total_user_info(filepath,db):# 插入数据到表userNum
-  # filepath: user_info.txt
-  conf = SparkConf().setMaster("spark://stu:7077").setAppName("job01")
-  sc = SparkContext(conf=conf)
-  lines=sc.textFile(filepath)
-
-  line_song_info=lines.distinct()\
-                      .map(lambda line: line.split(" @#$#@ "))\
-                      .map(lambda list: [list[6], list[10].split(" ")])\
-                      .map(lambda list: [list[0], count(list[1])])\
-                      .collect()
-  # 听歌数和收藏歌单数
-  
-  count_user=0
-  count_listenSongs=0
-  count_collect_play=0
-  for item in line_song_info:
-    count_user=count_user+1
-    count_listenSongs=count_listenSongs+int(item[0])
-    count_collect_play=count_collect_play+int(item[1])
-  
-  # 使用cursor()方法获取操作游标 
-  cursor = db.cursor(cursor = pymysql.cursors.DictCursor)
-  # 插入数据到表userNum
-  try:
-    sql = "INSERT INTO userNum (unum, cnum, snum) VALUES (%s, %s, %s)"
-    data = (count_user, count_collect_play, count_listenSongs)
-    cursor.execute(sql, data)
-    db.commit()
-  except Exception as e:
-    print(e)
-    # 如果发生错误则回滚
-    db.rollback()
-  cursor.close()
-  db.close()
-
-def count(list1):
-  if(list1[0]=="null"):
-    return 0
-  else:
-    return len(list1)
   
 
 def singer_info(filepath, db):  # 插入数据到表singersNumInfo
@@ -145,48 +61,6 @@ def playlist_info(filepath,db): # 插入数据到表songListsNumInfo
   db.close()
 
 
-def playlist_all_info(filepath,filepath1,db): # 插入数据到表songListAllNum
-  #filepath：playlist_info.txt、 filepath1: song_info.txt
-  conf = SparkConf().setMaster("spark://stu:7077").setAppName("job01")
-  sc = SparkContext(conf=conf)
-  lines=sc.textFile(filepath)
-
-  line_playlist_info=lines.distinct()\
-                      .map(lambda line: line.split(" @#$#@ "))\
-                      .map(lambda list: [list[3], list[8], list[2]])\
-                      .collect()
-  # 歌单收藏数、歌单评论数、歌单播放量、  
-  
-  # 歌曲数
-  conf1 = SparkConf().setMaster("spark://stu:7077").setAppName("job02")
-  sc1 = SparkContext(conf=conf1)
-  lines1=sc1.textFile(filepath1)
-
-  songs=lines1.distinct().count()
-
-  subscribedCount=0
-  comment=0
-  playCount=0
-  for item in line_playlist_info:
-    subscribedCount=subscribedCount+item[0]
-    comment=comment+item[1]
-    playCount=playCount+item[2]
-  # 打开数据库连接
-  db = pymysql.connect(host="124.222.244.117", user="zrgj2", password="zrgj2", database="zrgj2")
-  # 使用cursor()方法获取操作游标 
-  cursor = db.cursor(cursor = pymysql.cursors.DictCursor)
-  # 插入数据到表songListAllNum
-  try:
-    sql = "INSERT INTO songListAllNum (allcollect, allcomment, allplay, allmusicnum) VALUES (%s, %s, %s, %s, %s, %s)"
-    data = (subscribedCount, comment, playCount, songs)
-    cursor.execute(sql, data)
-    db.commit()
-  except Exception as e:
-    print(e)
-    # 如果发生错误则回滚
-    db.rollback()
-  cursor.close()
-  db.close()
 
 
 def playlist_user_region(filepath, filepath1, db):   # 插入数据到表songListRegion
@@ -341,36 +215,7 @@ def get_age():
   return age
 
 
-def playlist_all_info(filepath,db): # 插入数据到表songListNum
-  #  filepath: playlist_info.txt;
-  conf = SparkConf().setMaster("spark://stu:7077").setAppName("job01")
-  sc = SparkContext(conf=conf)
-  lines=sc.textFile(filepath)
 
-  line_playlist_user_info=lines.distinct()\
-                      .map(lambda line: line.split(" @#$#@ "))\
-                      .map(lambda list: [list[0], list[1], list[3], list[8], list[2]])\
-                      .collect()
-  # 歌单id、歌单名字、收藏数、评论量、播放量、收录音乐
-
-  # 打开数据库连接
-  db = pymysql.connect(host="124.222.244.117", user="zrgj2", password="zrgj2", database="zrgj2")
-  # 使用cursor()方法获取操作游标 
-  cursor = db.cursor(cursor = pymysql.cursors.DictCursor)
-  # 插入数据到表songListNum
-
-  for item in line_playlist_user_info:
-    try:
-      sql = "INSERT INTO songListNum (lid, lname, cnum, pnum, snum, mnum) VALUES (%s, %s, %s, %s, %s, %s)"
-      data = (item[0], item[1], item[2], item[3], item[4], item[5], 100)
-      cursor.execute(sql, data)
-      db.commit()
-    except Exception as e:
-      print(e)
-      # 如果发生错误则回滚
-      db.rollback()
-  cursor.close()
-  db.close()
 
 
 if __name__=="__main__":

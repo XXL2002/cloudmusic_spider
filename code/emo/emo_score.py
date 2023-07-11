@@ -21,9 +21,9 @@ def score_lyr(lyric):
         return -1
     
     else:
-
+        
         depart = lyric.split(' ')   # 获取歌词列表
-        score_list = [SnowNLP(item).sentiments for item in depart if item != '']
+        score_list = [1 - SnowNLP(item).sentiments for item in depart if item != '']
         if len(score_list) != 0:
             score = sum(score_list) / len(score_list)
             return score
@@ -62,7 +62,7 @@ def score_comment(iterable):
     comment_emo_list = []
     for line in iterable[1].split("\n"):
         list = line.split(' @#$#@ ')
-        comment_emo_list.append((SnowNLP(list[3]).sentiments, int(list[4])))
+        comment_emo_list.append((1 - SnowNLP(list[3]).sentiments, int(list[4])))
 
     sum_likecount = sum(item[1] for item in comment_emo_list) + len(comment_emo_list)   # 点赞总数，每条评论点赞数加1，方式出现0权重
     score = sum((item[1] + 1) / sum_likecount * item[0] for item in comment_emo_list)   # 一首歌的emo指数
@@ -130,7 +130,7 @@ def score_songs(sc, songs_emo_dict, lyric_emo_dict):
 def score_user(list, songs_emo_dict):
 
     signature = list[5]     # 用户个人简介
-    signature_score = SnowNLP(signature).sentiments if signature != 'null' and signature != '' else -1
+    signature_score = 1 - SnowNLP(signature).sentiments if signature != 'null' and signature != '' else -1
     
     all_rank = list[7].split(' ') if list[7] != 'null' else []    # 全部听歌排行
     all_list = [songs_emo_dict[song_id] for song_id in all_rank if song_id in songs_emo_dict]
@@ -238,7 +238,7 @@ def score_playlists(sc, playlist_emo_dict, songs_emo_dict):
     str = '\n'.join(tmp_list).encode()
 
     client.create('/emo_data/info/playlist_info.txt', data=str)
-
+    
     print('所有歌单emo指数计算完毕!')
 
 

@@ -113,9 +113,10 @@ def score_songs(sc, songs_emo_dict, lyric_emo_dict):
     client = HdfsClient(hosts='stu:50070', user_name='root')
     rdd = sc.textFile('hdfs://stu:9000/basic_data/info/song_info.txt')
     
+    # 对每首歌评emo指数、去除emo指数为-1
     tmp_list = rdd.map(lambda line: line.split(' @#$#@ ')) \
                     .map(lambda list: score_song(list, lyric_emo_dict, songs_emo_dict)) \
-                    .filter(lambda list: list[6] != '-1') \
+                    .filter(lambda list: list[8] != '-1') \
                     .map(lambda list: ' @#$#@ '.join(list)) \
                     .collect()
     
@@ -162,6 +163,7 @@ def score_users(sc, songs_emo_dict):
 
     rdd = sc.textFile('hdfs://stu:9000/basic_data/info/user_info.txt')
 
+    # 计算每个用户的emo指数、去除emo指数为-1
     tmp_list = rdd.map(lambda line: line.split(' @#$#@ ')) \
                     .map(lambda list: score_user(list, songs_emo_dict)) \
                     .filter(lambda list: list[11] != '-1') \
@@ -194,6 +196,7 @@ def score_singers(sc, songs_emo_dict):
 
     rdd = sc.textFile('hdfs://stu:9000/basic_data/info/singer_info.txt')
 
+    # 计算每个歌手的emo指数、去除emo指数为-1
     tmp_list = rdd.map(lambda line: line.split(' @#$#@ ')) \
                     .map(lambda list: score_singer(list, songs_emo_dict)) \
                     .filter(lambda list: list[5] != '-1') \
@@ -210,7 +213,7 @@ def score_singers(sc, songs_emo_dict):
 # 计算单个歌单的emo指数
 def score_playlist(list, playlist_emo_dict, songs_emo_dict):
 
-    hotSongs = list[7].split(' ')   # 歌单内的前十首歌曲id
+    hotSongs = list[8].split(' ')   # 歌单内的前十首歌曲id
     score_list = [songs_emo_dict[song_id] for song_id in hotSongs if song_id in songs_emo_dict]
     song_score = sum(score_list) / len(score_list) if len(score_list) != 0 else -1
 
@@ -232,6 +235,7 @@ def score_playlists(sc, playlist_emo_dict, songs_emo_dict):
 
     tmp_list = rdd.map(lambda line: line.split(' @#$#@ ')) \
                     .map(lambda list: score_playlist(list, playlist_emo_dict, songs_emo_dict)) \
+                    .filter(lambda list: list[10] != -1) \
                     .map(lambda list: ' @#$#@ '.join(list)) \
                     .collect()
     

@@ -21,7 +21,7 @@ def get_playlist_tag(playlistid):
         return ""
         
     # 返回歌单标签列表
-    print(content_json['playlist']['tags'])
+    # print(content_json['playlist']['tags'])
     return content_json['playlist']['tags']
 
 
@@ -40,7 +40,7 @@ def get_song_tag(song_id):
     # list
     html_data = html.xpath("//div[@class='info']//@data-res-id")
     html_data = [int(i) for i in html_data]
-    print(html_data)
+    # print(html_data)
     tags = []
     for id in html_data:
         sleep(1.5)
@@ -49,7 +49,7 @@ def get_song_tag(song_id):
     tags = list(set(tags))
     # str
     res = str(" ".join(tags))
-    print(res)
+    # print(res)
     return res
         
 

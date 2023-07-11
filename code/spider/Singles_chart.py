@@ -19,11 +19,11 @@ import multiprocessing as mp
 
 # 进程数量限制
 def limit_list():
-    return 3
+    return 2
 def limit_track():
-    return 4
+    return 2
 def limit_user():
-    return 4
+    return 2
 
 def init():
     cleardir(r'data/info')

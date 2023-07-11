@@ -30,6 +30,7 @@ def province_word_count(sc, connection):
     # 合并两个rdd
     rdd = playlist_comments_rdd.union(song_comments_rdd)
 
+    # 过滤地区不存在、提取评论与地区、按地区统计词频
     result = rdd.map(lambda line: line.split(' @#$#@ ')) \
                 .filter(lambda list: list[5] != 'null') \
                 .flatMap(lambda list: extract_words(list[3], list[5])) \
@@ -43,8 +44,9 @@ def province_word_count(sc, connection):
                 .collect()
     
     cursor = connection.cursor()
-
-    sql = "INSERT INTO userRegionWord (cname, word, cnt) VALUES (%s, %s, %s)"
+    
+    # 14 活跃用户地区评论词云表userWord(省份名 cname, 评论词云词语 word, 出现次数 cnt)
+    sql = "INSERT INTO userWord (cname, word, cnt) VALUES (%s, %s, %s)"
     cursor.executemany(sql, result)
     connection.commit()
 
@@ -79,10 +81,11 @@ def playlist_word_count(sc, client, connection, Music_charts):
         frequence = ' '.join([str(word[1]) for word in word_list])
         result.append((id, inverse_dict[id], words, frequence))
         
-
+        
     cursor = connection.cursor()
 
-    sql = "INSERT INTO songListWord (lid, lname, word, cnt) VALUES (%s, %s, %s, %s)"
+    # 16 歌单评论词云表listCommentWord(歌单id lid, 歌单名 lname, 词云词语 word, 出现次数 cnt)
+    sql = "INSERT INTO listCommentWord (lid, lname, word, cnt) VALUES (%s, %s, %s, %s)"
     cursor.executemany(sql, result)
     connection.commit()
 
@@ -93,6 +96,7 @@ def playlist_word_count(sc, client, connection, Music_charts):
 # 爬取每个歌手创建歌曲时的高频词汇
 def singer_word_count(sc, connection):
     
+    # 从歌手信息表中取出歌手id、歌手名、歌手创作歌曲id
     singer_list = sc.textFile('hdfs://stu:9000/data/info/singer_info.txt') \
             .map(lambda line: line.split(' @#$#@ ')) \
             .filter(lambda list: len(list) == 5) \
@@ -104,6 +108,7 @@ def singer_word_count(sc, connection):
             .map(lambda line: line.split(' @#$#@ ')) \
             .filter(lambda list: len(list) == 6)
     
+    # 遍历每个歌手
     for singer in singer_list:
 
         word_list = rdd.filter(lambda list: list[0] in singer[2]) \
@@ -120,6 +125,7 @@ def singer_word_count(sc, connection):
     
     cursor = connection.cursor()
 
+    # 29 歌手歌曲歌词词云表singerWord(歌手id seid, 歌手名 sename, 所有歌词词云词语 word, 出现次数 cnt)
     sql = "INSERT INTO singerWord (seid, sename, word, cnt) VALUES (%s, %s, %s, %s)"
     cursor.executemany(sql, result)
     connection.commit()
@@ -155,17 +161,7 @@ if __name__ == '__main__':
     # # 统计歌手创作词云
     # singer_word_count(sc, connection)
 
-    cursor = connection.cursor()
-
-    sql = "DESCRIBE singerWord"
-    cursor.execute(sql)
-    table_structure = cursor.fetchall()
-    for column in table_structure:
-        print(column)
-    
-    cursor.close()
     connection.close()
-
     sc.stop()
 
 

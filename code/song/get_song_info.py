@@ -6,6 +6,7 @@ from tools.request import get
 from song.get_song_lyric import get_song_lyric
 from tools.file import save_csv
 from tools.struct import file_info_paths
+from song.get_song_tag import get_song_tag
 
 
 def get_song_info(songid, total):
@@ -43,6 +44,11 @@ def get_song_info(songid, total):
         # 评论数
         data['total'] = total
         
+        # get tag [from playlists that includes it]
+        
+        tags = get_song_tag(songid)
+        data['tag'] =  tags if len(tags)!=0 else "null"
+        print(f"get= {data['tag']}")
         save_csv(file_info_paths['song'], data)
 
         return data['singer_id']
@@ -51,5 +57,5 @@ def get_song_info(songid, total):
 
 
 if __name__ == "__main__":
-
-    get_song_info(497572729)
+    a = 0
+    get_song_info(1964443044,a)

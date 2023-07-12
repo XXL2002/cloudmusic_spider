@@ -19,11 +19,11 @@ import multiprocessing as mp
 
 # 进程数量限制
 def limit_list():
-    return 4
+    return 1
 def limit_track():
-    return 4
+    return 16
 def limit_user():
-    return 4
+    return 16
 
 def init():
     cleardir(r'data/info')
@@ -37,9 +37,10 @@ def init():
     
 def anauser(user_id,i,size):
     get_user_info(user_id)
-    if ((i+1) % 10 == 0 or i ==size-1):
-        progress_bar(i+1,size)
-        sleep()
+    # if ((i+1) % 10 == 0 or i ==size-1):
+    # progress_bar(i+1,size)
+    print(f"爬取用户中...进度:{i+1} / {size} ...")
+    sleep()
 
 def anasong(track_id,i,size,q):
     print(f"\t\t单曲idx:{i+1}/{size}")
@@ -100,12 +101,13 @@ def analist(chart_id, sem):
     
     for i in range(len(queue)):
         users += queue[i].get()
-        # print(f"===Now the size is {len(users)}")
+        print(f"===Now the size is {len(users)}")
     
     # Light对于每个歌单只取20*1+10*10个用户
     users = list(set(users))
     # print(f"\n\n{users}\n\n")
     print("\t正在爬取与本排行榜相关的用户信息...")
+    print(f"=====待爬取用户总数为{len(users)}=====")
     
     # # 单开
     # for i in range(0,len(users)):

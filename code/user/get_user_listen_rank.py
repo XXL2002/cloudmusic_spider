@@ -37,6 +37,6 @@ def get_user_listen_rank(user_id):
 
 if __name__=="__main__":
 
-    user_id = 2020510908
+    user_id = 413580720
     alldatalist,weekdatalist=get_user_listen_rank(user_id)
     print(alldatalist,weekdatalist)

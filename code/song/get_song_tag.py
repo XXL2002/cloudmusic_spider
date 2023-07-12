@@ -12,17 +12,20 @@ def get_playlist_tag(playlistid):
         获取指定歌单的标签
     '''
     print(f"开始爬取歌单{playlistid}的tags...")
-    url = f'https://music.163.com/api/v1/playlist/detail?id={playlistid}'
-
-    content_json = get(url)
-
-    if content_json is None:
-        print("11111")
-        return ""
+    try:
+        url = f"https://music.163.com/playlist?id={playlistid}"
+        response = requests.get(url, headers=get_header())
+        if response.status_code == 200:
+            response.close()
+    except:
+        print("爬取失败!")
         
-    # 返回歌单标签列表
-    # print(content_json['playlist']['tags'])
-    return content_json['playlist']['tags']
+    html = etree.HTML(response.text)
+    # list
+    html_data = html.xpath("//div[@class='tags f-cb']//i/text()")
+    print(html_data)
+
+    return html_data
 
 
 def get_song_tag(song_id):
@@ -43,13 +46,12 @@ def get_song_tag(song_id):
     # print(html_data)
     tags = []
     for id in html_data:
-        sleep(1.5)
         tags += get_playlist_tag(id)
     # 去重
     tags = list(set(tags))
     # str
     res = str(" ".join(tags))
-    # print(res)
+    print(res)
     return res
         
 

@@ -38,7 +38,7 @@ def get(url,retry = 5):
 def post(url, data,retry = 5):
 
     if retry != 5:
-        time.sleep(30)
+        sleep(5)
     if retry == 0:
         print("retry overflows!")
         raise Exception("retry overflows!")

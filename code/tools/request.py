@@ -27,11 +27,15 @@ def get(url,retry = 5):
         else:
             
             print(content_json['code'])
-            return get(url,retry=retry-1)
+            if content_json['code'] != -2:
+                return get(url,retry=retry-1)
+            else:
+                print("None Request!")
+                raise Exception("None Request!")
         
     except:
 
-        print("爬取失败!")
+        print("爬取失败[from get]!")
     
 
 # post请求
@@ -54,9 +58,16 @@ def post(url, data, retry = 5):
         
         else:
             
-            print(content_json['code'])
-            return post(url,data,retry=retry-1)
+            if content_json['code'] == 406:
+                return get(url,retry=retry-1)
+            else:
+                if content_json['code'] == -2:
+                    print("None Request!")
+                    raise Exception("None Request!")
+                elif content_json['code'] == 404:
+                    print("404!")
+                    raise Exception("404")
         
     except:
 
-        print("爬取失败!")
+        print("爬取失败[from post]!")

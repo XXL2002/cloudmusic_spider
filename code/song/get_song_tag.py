@@ -18,7 +18,7 @@ def get_playlist_tag(playlistid):
         if response.status_code == 200:
             response.close()
     except:
-        print("爬取失败!")
+        print("爬取歌单Tag失败!")
         
     html = etree.HTML(response.text)
     # list
@@ -36,7 +36,7 @@ def get_song_tag(song_id):
         if response.status_code == 200:
             response.close()
     except:
-        print("爬取失败!")
+        print("爬取单曲Tag失败!")
         
     html = etree.HTML(response.text)
     # time.sleep(1)

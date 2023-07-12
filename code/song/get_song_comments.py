@@ -74,7 +74,7 @@ def get_song_comments(songid):
 
         sleep()
     
-    print("爬取结束!")
+    print("爬取song评论结束...")
     return users, total
 
 

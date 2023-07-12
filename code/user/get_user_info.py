@@ -89,7 +89,7 @@ def get_user_info(user_id):
         
     save_csv(file_info_paths['user'], data)
     
-    print("\t\t正在爬取TA的听歌总榜...")
+    print("\t\t正在爬取TA的听歌总榜评论...")
     for i in range(0,len(alldatalist)):
         print(f"总榜{i+1}/{len(alldatalist)}")
         filepath = f"data/song_comments/song_{alldatalist[i]}.txt"
@@ -98,7 +98,7 @@ def get_user_info(user_id):
         users, total = get_song_comments(alldatalist[i])
         get_song_info(alldatalist[i], total)
         
-    print("\t\t正在爬取TA的听歌周榜...")
+    print("\n\t\t正在爬取TA的听歌周榜评论...")
     for i in range(0,len(weeklist)):
         print(f"周榜{i+1}/{len(weeklist)}")
         filepath = f"data/song_comments/song_{weeklist[i]}.txt"

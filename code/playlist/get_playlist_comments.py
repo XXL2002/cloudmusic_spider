@@ -72,7 +72,7 @@ def get_playlist_comments(playlistid):
 
         sleep()
     
-    print("爬取结束!")
+    print("爬取playlist评论结束...")
     return users, total
 
 

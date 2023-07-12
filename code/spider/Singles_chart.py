@@ -19,11 +19,11 @@ import multiprocessing as mp
 
 # 进程数量限制
 def limit_list():
-    return 2
+    return 4
 def limit_track():
-    return 2
+    return 4
 def limit_user():
-    return 2
+    return 4
 
 def init():
     cleardir(r'data/info')
@@ -62,9 +62,11 @@ def analist(chart_id, sem):
     sem.acquire()
     
     users, total = get_playlist_comments(chart_id)     # 爬取排行榜的评论
+    # print("\n!!!!!!!!!!get_playlist_comments结束!!!!!!!!!!!!")
     
     trackIds = get_playlist_info(chart_id, total)     # 爬取排行榜的基本信息
-
+    # print("\n!!!!!!!!!!get_playlist_info结束!!!!!!!!!!!!")
+    
     # 取每个歌单的前20个用户
     # users = users[0:20] if len(users)>=20 else users
     print(f"\n=====从歌单中取出{len(users)}个用户====\n")

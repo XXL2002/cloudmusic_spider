@@ -50,11 +50,11 @@ def anasong(track_id,i,size,q):
 
     get_singer_info(singer_id)           # 爬取歌手基本信息
 
-    tmp_users = list(set(tmp_users))
+    # tmp_users = list(set(tmp_users))
 
     # 取每首歌的前10个用户
-    # tmp_users = tmp_users[0:10] if len(tmp_users)>=10 else tmp_users
-
+    tmp_users = tmp_users[0:10]
+    
     q.put(tmp_users)
     
 def analist(chart_id, sem):
@@ -68,7 +68,7 @@ def analist(chart_id, sem):
     # print("\n!!!!!!!!!!get_playlist_info结束!!!!!!!!!!!!")
     
     # 取每个歌单的前20个用户
-    # users = users[0:20] if len(users)>=20 else users
+    users = users[0:20]
     print(f"\n=====从歌单中取出{len(users)}个用户====\n")
 
     # tracks = []

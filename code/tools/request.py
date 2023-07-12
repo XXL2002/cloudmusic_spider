@@ -35,8 +35,8 @@ def get(url,retry = 5):
     
 
 # post请求
-def post(url, data,retry = 5):
-
+def post(url, data, retry = 5):
+    
     if retry != 5:
         sleep(5)
     if retry == 0:
@@ -44,12 +44,12 @@ def post(url, data,retry = 5):
         raise Exception("retry overflows!")
     
     try:
-        response = requests.post(url, headers=get_header(), data=data)
+        response = requests.post(url, headers = get_header(), data = data)
         content_json = response.json()
 
         if content_json['code'] == 200:
-
-            response.close()
+            
+            response.close()    
             return content_json
         
         else:

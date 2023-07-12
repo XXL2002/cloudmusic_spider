@@ -48,7 +48,7 @@ def get_song_info(songid, total):
         
         tags = get_song_tag(songid)
         data['tag'] =  tags if len(tags)!=0 else "null"
-        print(f"get= {data['tag']}")
+        # print(f"get= {data['tag']}")
         
         save_csv(file_info_paths['song'], data)
 

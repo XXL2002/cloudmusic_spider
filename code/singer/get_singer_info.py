@@ -15,7 +15,7 @@ def get_singer_info(singer_id):
     '''
     if singer_id == -1:
         return
-    
+    print(f"开始爬取歌手{singer_id}的基本信息...")
     url = f'http://music.163.com/api/artist/{singer_id}'
     data = {}
     content_json = get(url)
@@ -49,15 +49,17 @@ def get_singer_info(singer_id):
 
 
     # 获取歌手热门歌曲id
-    hotSongs = [hotSong['id'] for hotSong in content_json['hotSongs']]
+    hotSongs = [hotSong['id'] for hotSong in content_json['hotSongs']][:10]
     data['hotsongs'] = list2str(hotSongs)
 
     save_csv(file_info_paths['singer'], data)
     
     # 爬取该歌手热门歌曲的基本信息
-    for song in hotSongs:
-        user, total = get_song_comments(song)
-        get_song_info(song, total)
+    print(f"正在爬取该歌手的热门歌曲...")
+    for i in range(len(hotSongs)):
+        print(f"\n\t\t热门单曲{i+1} / 10:")
+        user, total = get_song_comments(hotSongs[i])
+        get_song_info(hotSongs[i], total)
 
     return
 

@@ -1,8 +1,4 @@
-
-def get_song(song_id):  #song_id: str
-    # 返回值为包括[歌曲id,歌曲名称,emo指数,歌曲标签集合]的嵌套列表
-    # TODO
-    return ["111", "t", 0.9, {"华语", "空灵", "平静", "伤感"} ]
+from pyspark import SparkConf, SparkContext
 
 def get_song(song_id):  #song_id: str
     # 返回值为包括[歌曲id,歌曲名称,emo指数,歌曲标签集合]的嵌套列表
@@ -13,7 +9,7 @@ def get_song(song_id):  #song_id: str
 
     filepath = "hdfs://stu:9000/basic_data/info/song_info.txt"
     
-    conf = SparkConf().setMaster("spark://cons:7077").setAppName("job01")
+    conf = SparkConf().setMaster("spark://stu:7077").setAppName("job01")
     sc = SparkContext(conf=conf)
 
     song_info = sc.textFile(filepath) \
@@ -32,9 +28,9 @@ def get_songs_by_emo(target_emo):   #target_emo: float
     # 从歌曲库中查找所有emo指数与target_emo相近的歌曲[前100首？]
     # TODO
 
-    filepaths = "hdfs:/t:9000/data/info/song_info2.txt"
+    filepaths = "hdfs://stu:9000/basic_data/info/song_info.txt"
 
-    conf = SparkConf().setMaster("spark:/t:7077").setAppName("job02")
+    conf = SparkConf().setMaster("spark://stu:7077").setAppName("job1")
     sc = SparkContext(conf=conf)
 
     # 获取ID、歌曲名、emo以及歌曲标签
@@ -77,14 +73,6 @@ def filter_with_tag(target_song):   #target_song样例: ["111", "t", 0.9, {"华�
     return song_list
 
 
-
-
-def get_user_rank(user_id):
-    # 获取用户最近听歌排行列表[ 周榜5首 + 总榜5首 ]共10首
-    # TODO
-    return [ ["123", "a", 0.7, {"华语", "悲伤", "空灵"} ], ["123", "a", 0.7, {"华语", "伤感"} ], ["321", "b", 0.8, {"纯音乐", "空灵"} ]]
-
-
 def get_user_rank(user_id):
     # 获取用户最近听歌排行列表[ 周榜5首 + 总榜5首 ]共10首
     # TODO
@@ -123,7 +111,7 @@ def get_user_hobby(user_id):
     # 用户听歌喜好字典
     hobby_dic = {}
     for song in user_rank:
-        tag_set = song[3]get_
+        tag_set = song[3]
         for tag in tag_set:
             if tag in hobby_dic:
                 hobby_dic[tag] += 1
@@ -149,7 +137,7 @@ def get_user_detail(user_id):
     # TODO
     # return ["男", 18, "重庆市", 0.8]
 
-    filepath = "hdfs:/stu:9000/basic_data/info/user_info.txt"
+    filepath = "hdfs://stu:9000/basic_data/info/user_info.txt"
 
     conf = SparkConf().setMaster("spark:/t:7077").setAppName("job02")
     sc = SparkContext(conf=conf)

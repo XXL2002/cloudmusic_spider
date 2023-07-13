@@ -21,11 +21,12 @@ import multiprocessing as mp
 def limit_list():
     return 1
 def limit_track():
-    return 16
+    return 12
 def limit_user():
-    return 16
+    return 12
 
 def init():
+    # return
     cleardir(r'data/info')
     cleardir(r'data/song_comments')
     cleardir(r'data/playlist_comments')
@@ -36,6 +37,8 @@ def init():
     # add_header(file_info_paths['user'], file_headers['user'])
     
 def anauser(user_id,i,size):
+    # 拥塞控制
+    sleep(2.5)
     get_user_info(user_id)
     # if ((i+1) % 10 == 0 or i ==size-1):
     # progress_bar(i+1,size)
@@ -44,7 +47,8 @@ def anauser(user_id,i,size):
 
 def anasong(track_id,i,size,q):
     print(f"\t\t单曲idx:{i+1}/{size}")
-    
+    # 拥塞控制
+    sleep(2.5)
     tmp_users, total = get_song_comments(track_id)           # 爬取歌曲评论
 
     singer_id = get_song_info(track_id, total)   # 爬取歌曲基本信息

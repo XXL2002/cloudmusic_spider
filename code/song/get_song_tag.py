@@ -19,7 +19,8 @@ def get_playlist_tag(playlistid):
             response.close()
     except:
         print("爬取歌单Tag失败!")
-        
+    if response is None:
+        return ""   
     html = etree.HTML(response.text)
     # list
     html_data = html.xpath("//div[@class='tags f-cb']//i/text()")

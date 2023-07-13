@@ -151,9 +151,18 @@ if __name__ == "__main__":
     
     # 最大一级子进程信号量
     maxSem = Semaphore(limit_list())
+    processes = []
     for chart_id in Music_charts.values():
         
         time.sleep(7)
         pl = Process(target=analist, args=(chart_id, maxSem))
         pl.start()
+        processes.append(pl)
+    
+    for pl in processes:
+        pl.join()
+    
+    print("**************successfully exit**************")
+    
+    
    

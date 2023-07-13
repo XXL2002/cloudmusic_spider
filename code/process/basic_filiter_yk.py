@@ -41,11 +41,13 @@ def new_dir(client, new_data_path):
 def singer_info_filter(client, rdd, filepath):
 
     # 去重、去除列数不为5
-    tmp_list = rdd.distinct() \
-                .map(lambda line: line.split(' @#$#@ ')) \
-                .filter(lambda list: len(list) == 5) \
-                .map(lambda list: ' @#$#@ '.join(list)) \
-                .collect()
+    tmp_list = rdd.map(lambda line: line.split(' @#$#@ ')) \
+                    .map(lambda list: (list[0], list)) \
+                    .reduceByKey(lambda x,y: x) \
+                    .map(lambda x: x[1]) \
+                    .filter(lambda list: len(list) == 5) \
+                    .map(lambda list: ' @#$#@ '.join(list)) \
+                    .collect()
     
     str = '\n'.join(tmp_list).encode()
 
@@ -56,8 +58,10 @@ def singer_info_filter(client, rdd, filepath):
 def playlist_info_filter(client, rdd, filepath):
 
     # 去重、去除列数不为8
-    tmp_list = rdd.distinct() \
-                .map(lambda line: line.split(' @#$#@ ')) \
+    tmp_list = rdd.map(lambda line: line.split(' @#$#@ ')) \
+                .map(lambda list: (list[0], list)) \
+                .reduceByKey(lambda x,y: x) \
+                .map(lambda x: x[1]) \
                 .filter(lambda list: len(list) == 10) \
                 .map(lambda list: ' @#$#@ '.join(list)) \
                 .collect()
@@ -71,8 +75,10 @@ def playlist_info_filter(client, rdd, filepath):
 def user_info_filter(client, rdd, filepath):
 
     # 去重、去除列数不为11、去除年龄不在范围内、不清洗个人简介为空的用户
-    tmp_list = rdd.distinct() \
-                .map(lambda line: line.split(' @#$#@ ')) \
+    tmp_list = rdd.map(lambda line: line.split(' @#$#@ ')) \
+                .map(lambda list: (list[0], list)) \
+                .reduceByKey(lambda x,y: x) \
+                .map(lambda x: x[1]) \
                 .filter(lambda list: len(list) == 11 and ( list[3] == 'null' or 0 < int(list[3]) < 100)) \
                 .map(lambda list: ' @#$#@ '.join(list)) \
                 .collect()
@@ -86,8 +92,10 @@ def user_info_filter(client, rdd, filepath):
 def song_info_filter(client, rdd, filepath):
 
     # 去重、去除列数不为6、去除歌词为空、去除歌词无关信息
-    tmp_list = rdd.distinct() \
-                .map(lambda line: line.split(' @#$#@ ')) \
+    tmp_list = rdd.map(lambda line: line.split(' @#$#@ ')) \
+                .map(lambda list: (list[0], list)) \
+                .reduceByKey(lambda x,y: x) \
+                .map(lambda x: x[1]) \
                 .filter(lambda list: len(list) == 8 and list[5] != 'null') \
                 .map(lambda list: [list[i] if i != 5 else lyric_filter(list[i]) for i in range(len(list))]) \
                 .map(lambda list: ' @#$#@ '.join(list)) \
@@ -100,7 +108,7 @@ def song_info_filter(client, rdd, filepath):
 
 # 对评论文件进行清洗
 def comment_filter(client, rdd, filepath):
-    
+      
     # 去除列数不为6、以及评论为空的数据
     tmp_list = rdd.map(lambda line: line.split(' @#$#@ ')) \
             .filter(lambda list: len(list) == 6 and list[3] != '') \

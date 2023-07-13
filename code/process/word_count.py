@@ -1,3 +1,5 @@
+# -*- coding: utf8-*-
+
 import sys
 sys.path.append('code')
 
@@ -18,8 +20,8 @@ def extract_words(words, region):
 
 # 统计完每个地区的高频词汇后整理
 def transform(region, list):
-    words = ' '.join([word[0] for word in list])
-    frequences = ' '.join([str(word[1]) for word in list])
+    words = ' @#$#@ '.join([word[0] for word in list])
+    frequences = ' @#$#@ '.join([str(word[1]) for word in list])
     return (region, words, frequences)
 
 
@@ -43,23 +45,18 @@ def province_word_count(sc, connection):
                 .map(lambda x: (x[0][0], (x[0][1], x[1]))) \
                 .groupByKey() \
                 .map(lambda x:(x[0], list(x[1]))) \
-                .mapValues(lambda x: sorted(x, key=lambda y:-y[1])[:10]) \
+                .mapValues(lambda x: sorted(x, key=lambda y:-y[1])) \
                 .map(lambda x: transform(x[0], x[1])) \
                 .collect()
     
-    print(result)
+    # print(result)
 
     cursor = connection.cursor()
-    
-    showTable(connection, 'userRegionWord')
-    deleteAll(connection, 'userRegionWord')
     
     # 14 活跃用户地区评论词云表userWord(省份名 cname, 评论词云词语 word, 出现次数 cnt)
     sql = "INSERT INTO userRegionWord (cname, word, cnt) VALUES (%s, %s, %s)"
     cursor.executemany(sql, result)
     connection.commit()
-
-    selectAll(connection, 'userRegionWord')
 
     cursor.close()
 
@@ -88,25 +85,19 @@ def playlist_word_count(sc, client, connection, Music_charts):
                                     .map(lambda x: (x, 1)) \
                                     .reduceByKey(lambda a, b: a + b) \
                                     .sortBy(lambda tuple: tuple[1], ascending=False) \
-                                    .take(10)
+                                    .collect()
                     
         id = re.search(r'\d+', playlist_files[i]).group(0)
-        words = ' '.join([word[0] for word in word_list])
-        frequence = ' '.join([str(word[1]) for word in word_list])
+        words = ' @#$#@ '.join([word[0] for word in word_list])
+        frequence = ' @#$#@ '.join([str(word[1]) for word in word_list])
         result.append((id, inverse_dict[id], words, frequence))
         
-        
     cursor = connection.cursor()
-
-    showTable(connection, 'listCommentWord')
-    deleteAll(connection, 'listCommentWord')
 
     # 16 歌单评论词云表listCommentWord(歌单id lid, 歌单名 lname, 词云词语 word, 出现次数 cnt)
     sql = "INSERT INTO listCommentWord (lid, lname, word, cnt) VALUES (%s, %s, %s, %s)"
     cursor.executemany(sql, result)
     connection.commit()
-
-    selectAll(connection, 'listCommentWord')
 
     cursor.close()
 
@@ -118,8 +109,8 @@ def count_lyric(str_word):
 
     word_list = str_word.split(' ')     # 词汇列表
     word_count_dict = Counter(item for item in word_list if item != '')
-    keys = ' '.join([str(key) for key in word_count_dict.keys()])
-    values = ' '.join([str(value) for value in word_count_dict.values()])
+    keys = ' @#$#@ '.join([str(key) for key in word_count_dict.keys()])
+    values = ' @#$#@ '.join([str(value) for value in word_count_dict.values()])
 
     return (keys, values)
 
@@ -133,15 +124,18 @@ def song_word_count(sc, connection):
     result = sc.textFile('hdfs://stu:9000/cut_data/info/song_info.txt') \
                 .map(lambda line: line.split(' @#$#@ ')) \
                 .filter(lambda list: len(list) == 8) \
+                .map(lambda x:(x[0], x)) \
+                .reduceByKey(lambda x,y:x) \
                 .map(lambda list: [list[0], list[1], count_lyric(list[5])]) \
                 .map(lambda x: (x[0], x[1], x[2][0], x[2][1])) \
                 .collect()
     
+    print(result)
     cursor = connection.cursor()
     
     showTable(connection, 'songWord')
     deleteAll(connection, 'songWord')
-
+    
     # 22 歌曲歌词词云表songWord(歌曲id sid, 歌曲名 sname, 歌词词云词语 word, 对应次数 cnt)
     sql = "INSERT INTO songWord (sid, sname, word, cnt) VALUES (%s, %s, %s, %s)"
     cursor.executemany(sql, result)
@@ -183,11 +177,11 @@ def song_comment_wordcount(sc, connection):
                                 .map(lambda x: (x, 1)) \
                                 .reduceByKey(lambda a, b: a + b) \
                                 .sortBy(lambda tuple: tuple[1], ascending=False) \
-                                .take(10)
+                                .collect()
                     
         id = re.search(r'\d+', song_files[i]).group(0)
-        words = ' '.join([word[0] for word in word_list])
-        frequence = ' '.join([str(word[1]) for word in word_list])
+        words = ' @#$#@ '.join([word[0] for word in word_list])
+        frequence = ' @#$#@ '.join([str(word[1]) for word in word_list])
         result.append((id, song_id_name_dict[id], words, frequence))
 
     cursor = connection.cursor()
@@ -234,8 +228,8 @@ def singer_word_count(sc, connection):
                         .sortBy(lambda tuple: tuple[1], ascending=False) \
                         .take(10)
 
-        words = ' '.join([word[0] for word in word_list])
-        frequence = ' '.join([str(word[1]) for word in word_list])
+        words = ' @#$#@ '.join([word[0] for word in word_list])
+        frequence = ' @#$#@ '.join([str(word[1]) for word in word_list])
 
         result.append((singer[0], singer[1], words, frequence))
     
@@ -274,19 +268,19 @@ if __name__ == '__main__':
 
 
     # 统计地区词云  
-    province_word_count(sc, connection)
+    # province_word_count(sc, connection)
 
     # 统计歌单词云
-    playlist_word_count(sc, client, connection, Music_charts)
+    # playlist_word_count(sc, client, connection, Music_charts)
 
     # 统计歌曲歌词词云
     song_word_count(sc, connection)
     
     # 统计每首歌评论词云
-    song_comment_wordcount(sc, connection)
+    # song_comment_wordcount(sc, connection)
 
     # 统计歌手创作词云
-    singer_word_count(sc, connection)
+    # singer_word_count(sc, connection)
 
     connection.close()
     sc.stop()

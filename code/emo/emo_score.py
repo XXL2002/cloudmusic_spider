@@ -207,7 +207,7 @@ def score_singers(sc, songs_emo_dict):
 
     client.create('/emo_data/info/singer_info.txt', data=str)
     
-    print('所有歌手emo指数计算完毕!')
+    print('所有歌手emo指数计算完毕!\n')
 
 
 # 计算单个歌单的emo指数
@@ -243,7 +243,7 @@ def score_playlists(sc, playlist_emo_dict, songs_emo_dict):
 
     client.create('/emo_data/info/playlist_info.txt', data=str)
     
-    print('所有歌单emo指数计算完毕!')
+    print('所有歌单emo指数计算完毕!\n')
 
 
 # 读取存放得分的文件

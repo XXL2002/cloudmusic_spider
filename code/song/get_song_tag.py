@@ -37,7 +37,9 @@ def get_song_tag(song_id):
             response.close()
     except:
         print("爬取单曲Tag失败!")
-        
+    
+    if response is None:
+        return "null"    
     html = etree.HTML(response.text)
     # time.sleep(1)
     # list

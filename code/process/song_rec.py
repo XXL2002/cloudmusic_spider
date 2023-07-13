@@ -104,6 +104,10 @@ def get_user_hobby(sc, user_id):
     # 获取用户听歌排排行列表
     user_rank = get_user_rank(sc, user_id)
     
+    # 无听歌信息
+    if len(user_rank) == 0:
+        return []   # 返回空hobby
+    
     # 用户听歌喜好字典
     hobby_dic = {}
     for song in user_rank:
@@ -154,20 +158,22 @@ def get_user_profile(sc, user_id):
     hobby = get_user_hobby(sc, user_id)
     detail = get_user_detail(sc, user_id)
     
-    # 泛化用户基本信息  [年龄]
-    if detail[1] < 18:
-        detail[1] = "未成年"
-    elif detail[1] < 30:
-        detail[1] = "青年"
-    elif detail[1] < 50:
-        detail[1] = "中年"
-    else:
-        detail[1] = "其他"
-    # 泛化用户基本信息  [emo指数]
-    if detail[3] >= 0.5:
-        detail[3] = "重度emo"
-    else :
-        detail[3] = "轻度emo"
+    # 有用户信息时,进行泛化
+    if len(detail) != 0:
+        # 泛化用户基本信息  [年龄]
+        if detail[1] < 18:
+            detail[1] = "未成年"
+        elif detail[1] < 30:
+            detail[1] = "青年"
+        elif detail[1] < 50:
+            detail[1] = "中年"
+        else:
+            detail[1] = "其他"
+        # 泛化用户基本信息  [emo指数]
+        if detail[3] >= 0.5:
+            detail[3] = "重度emo"
+        else :
+            detail[3] = "轻度emo"
     
     # 根据喜好和泛化基本信息生成用户画像
     user_profile = hobby + detail

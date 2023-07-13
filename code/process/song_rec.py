@@ -4,14 +4,50 @@ def get_song(song_id):  #song_id: str
     # TODO
     return ["111", "t", 0.9, {"华语", "空灵", "平静", "伤感"} ]
 
+def get_song(song_id):  #song_id: str
+    # 返回值为包括[歌曲id,歌曲名称,emo指数,歌曲标签集合]的嵌套列表
+    # TODO
+    # return ["111", "t", 0.9, {"华语", "空灵", "平静", "伤感"} ]
+
+    # filepath="hdfs://cons:9000/data/info/song_info.txt"   #带emo指数的song_info.txt文件路径
+
+    filepath = "hdfs://stu:9000/basic_data/info/song_info.txt"
+    
+    conf = SparkConf().setMaster("spark://cons:7077").setAppName("job01")
+    sc = SparkContext(conf=conf)
+
+    song_info = sc.textFile(filepath) \
+                        .map(lambda line: line.split(" @#$#@ "))\
+                        .filter(lambda line: line[0] == song_id)\
+                        .map(lambda list: [list[0], list[1], list[8], list[7]])\
+                        .collect()[0]
+    
+    if song_info[3] == 'null':
+        return [song_info[0], song_info[1], song_info[2], set()]
+    else:
+        return [song_info[0], song_info[1], song_info[2], set(song_info[3].split(' '))]
+
 
 def get_songs_by_emo(target_emo):   #target_emo: float
     # 从歌曲库中查找所有emo指数与target_emo相近的歌曲[前100首？]
     # TODO
+
+    filepaths = "hdfs:/t:9000/data/info/song_info2.txt"
+
+    conf = SparkConf().setMaster("spark:/t:7077").setAppName("job02")
+    sc = SparkContext(conf=conf)
+
+    # 获取ID、歌曲名、emo以及歌曲标签
+    result = sc.textFile(filepaths) \
+                .map(lambda line: line.split(" @#$#@ ")) \
+                .map(lambda line: [line[0], line[1], line[8], line[7], abs(float(line[8]) - target_emo)])\
+                .sortBy(lambda x: x[4], ascending=True)\
+                .map(lambda list: [list[0], list[1], list[2], set(list[3].split(' ')) if list[3] != 'null' else set()]) \
+                .take(100)
     
-    # 返回值为包括[歌曲id,歌曲名称,emo指数,歌曲标签集合]的嵌套列表
-    # TODO
-    return [ ["123", "a", 0.7, {"华语", "伤感"} ], ["321", "b", 0.8, {"纯音乐", "空灵"} ], ["456", "c", 0.9, {"电音", "原声大碟"} ] ]
+    sc.stop()
+    return result
+
 
 def filter_with_tag(target_song):   #target_song样例: ["111", "t", 0.9, {"华语", "空灵", "平静", "伤感"} ]
     # 根据自身的标签对1中的结果进行二次筛选，保留共同标签较多的歌曲
@@ -47,7 +83,37 @@ def get_user_rank(user_id):
     # 获取用户最近听歌排行列表[ 周榜5首 + 总榜5首 ]共10首
     # TODO
     return [ ["123", "a", 0.7, {"华语", "悲伤", "空灵"} ], ["123", "a", 0.7, {"华语", "伤感"} ], ["321", "b", 0.8, {"纯音乐", "空灵"} ]]
-  
+
+
+def get_user_rank(user_id):
+    # 获取用户最近听歌排行列表[ 周榜5首 + 总榜5首 ]共10首
+    # TODO
+    # return [ ["123", "a", 0.7, {"华语", "伤感"} ] * 10 ]
+    # filepath="hdfs://cons:9000/data/info/user_info.txt"
+
+
+    filepath1 = "hdfs://stu:9000/basic_data/info/user_info.txt"
+
+    conf = SparkConf().setMaster("spark://stu:7077").setAppName("job1")
+    sc = SparkContext(conf=conf)
+    
+    # 取出该用户的id、名字、全部听歌排行(前五)、近一周听歌排行(前五)
+    rank_list = sc.textFile(filepath1) \
+                        .map(lambda line: line.split(" @#$#@ ")) \
+                        .filter(lambda list: list[0] == user_id) \
+                        .map(lambda list: [list[7].split(" "), list[8].split(" ")]) \
+                        .collect()[0]
+    
+    filepath2 = "hdfs://stu:9000/basic_data/info/song_info.txt"
+    result = sc.textFile(filepath2) \
+                .map(lambda line: line.split(" @#$#@ ")) \
+                .filter(lambda list: list[0] in rank_list[0] or list[0] in rank_list[1]) \
+                .map(lambda list: [list[0], list[1], list[8], list[7]]) \
+                .collect()
+
+    return result
+    
+
 def get_user_hobby(user_id):
     # 用户的喜好来自于他听歌排行的普适标签
     
@@ -57,7 +123,7 @@ def get_user_hobby(user_id):
     # 用户听歌喜好字典
     hobby_dic = {}
     for song in user_rank:
-        tag_set = song[3]
+        tag_set = song[3]get_
         for tag in tag_set:
             if tag in hobby_dic:
                 hobby_dic[tag] += 1
@@ -77,10 +143,27 @@ def get_user_hobby(user_id):
     
     return res_hobby
     
+
 def get_user_detail(user_id):
     # 获取用户基本信息[性别,年龄(int),地区,emo指数(float)]
     # TODO
-    return ["男", 18, "重庆市", 0.8]
+    # return ["男", 18, "重庆市", 0.8]
+
+    filepath = "hdfs:/stu:9000/basic_data/info/user_info.txt"
+
+    conf = SparkConf().setMaster("spark:/t:7077").setAppName("job02")
+    sc = SparkContext(conf=conf)
+
+    # 获取性别、年龄、地区、emo
+    result = sc.textFile(filepath) \
+                .map(lambda line: line.split(" @#$#@ ")) \
+                .filter(lambda list: list[0] == user_id)\
+                .map(lambda line: [line[2], line[3], line[4], float(line[11])])\
+                .collect()[0]
+    
+    sc.stop()
+    return result
+
 
 def get_user_profile(user_id):
     # 分析单个用户的用户画像
@@ -109,10 +192,28 @@ def get_user_profile(user_id):
     
     return user_profile 
 
+
 def get_related_users(song_id):
     # 在该歌曲下评论的用户群体
     # TODO
-    return ["111", "123", "321"]
+    # return ["111", "123", "321"]
+
+    filepath = f"hdfs://stu:9000/basic_data/song_comments/song_{song_id}.txt"
+
+    conf = SparkConf().setMaster("spark://stu:7077").setAppName("job1")
+    sc = SparkContext(conf=conf)
+
+    # 取出歌曲评论文件里面的所有用户id,防止用户名重复
+    result = sc.textFile(filepath) \
+                .map(lambda line: line.split(" @#$#@ "))\
+                .map(lambda list: (list[0], list)) \
+                .reduceByKey(lambda x,y: x) \
+                .map(lambda x: x[1]) \
+                .map(lambda list: list[0])\
+                .collect()
+    
+    return result
+
 
 def get_song_profile(song_id, isDic = True):
     # 对各听众用户画像进行汇总[字典统计]，找出较为普适的用户画像作为本歌的用户画像

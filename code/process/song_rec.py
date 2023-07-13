@@ -1,3 +1,8 @@
+import os
+import shutil
+import sys
+sys.path.append("code")
+from tools.struct import Music_charts
 from pyspark import SparkConf, SparkContext
 
 def get_song(sc, song_id):  #song_id: str
@@ -6,7 +11,8 @@ def get_song(sc, song_id):  #song_id: str
     # return ["111", "t", 0.9, {"华语", "空灵", "平静", "伤感"} ]
 
     # filepath="hdfs://cons:9000/data/info/song_info.txt"   #带emo指数的song_info.txt文件路径
-
+    print(f"\n进入get_song {song_id}...")
+    
     filepath = "hdfs://stu:9000/emo_data/info/song_info.txt"
     
     song_info = sc.textFile(filepath) \
@@ -16,15 +22,19 @@ def get_song(sc, song_id):  #song_id: str
                         .collect()[0]
     
     if song_info[3] == 'null':
+        print(f"\n退出get_song {song_id}...")
+        print(f"return {[song_info[0], song_info[1], float(song_info[2]), set()]}")
         return [song_info[0], song_info[1], float(song_info[2]), set()]
     else:
+        print(f"\n退出get_song {song_id}...")
+        print(f"return {[song_info[0], song_info[1], float(song_info[2]), set(song_info[3].split(' '))]}")
         return [song_info[0], song_info[1], float(song_info[2]), set(song_info[3].split(' '))]
 
 
 def get_songs_by_emo(sc, target_emo):   #target_emo: float
     # 从歌曲库中查找所有emo指数与target_emo相近的歌曲[前100首？]
     # TODO
-
+    print(f"\n进入get_songs_by_emo {target_emo}...")
     filepaths = "hdfs://stu:9000/emo_data/info/song_info.txt"
 
     # 获取ID、歌曲名、emo以及歌曲标签
@@ -34,13 +44,15 @@ def get_songs_by_emo(sc, target_emo):   #target_emo: float
                 .sortBy(lambda x: x[4], ascending=True)\
                 .map(lambda list: [list[0], list[1], list[2], set(list[3].split(' ')) if list[3] != 'null' else set()]) \
                 .take(100)
-    
+    print(f"\n退出get_songs_by_emo {target_emo}...")
+    print(f"return {result}")
     return result
 
 
 def filter_with_tag(sc, target_song):   #target_song样例: ["111", "t", 0.9, {"华语", "空灵", "平静", "伤感"} ]
     # 根据自身的标签对1中的结果进行二次筛选，保留共同标签较多的歌曲
     
+    print(f"\n进入filter_with_tag {target_song}...")
     # 获取一次筛选的歌曲列表
     song_list = get_songs_by_emo(sc, target_song[2])
     
@@ -63,6 +75,8 @@ def filter_with_tag(sc, target_song):   #target_song样例: ["111", "t", 0.9, {"
     # print(song_list)
     # print(scores)
     
+    print(f"\n退出filter_with_tag {target_song}...")
+    print(f"return {song_list}")
     return song_list
 
 
@@ -72,6 +86,7 @@ def get_user_rank(sc, user_id):
     # return [ ["123", "a", 0.7, {"华语", "伤感"} ] * 10 ]
     # filepath="hdfs://cons:9000/data/info/user_info.txt"
 
+    print(f"\n进入get_user_rank{user_id}...")
 
     filepath1 = "hdfs://stu:9000/basic_data/info/user_info.txt"
     
@@ -95,12 +110,15 @@ def get_user_rank(sc, user_id):
                 .map(lambda list: [list[0], list[1], float(list[8]), list[7]]) \
                 .collect()
 
+    print(f"\n退出get_user_rank {user_id}...")
+    print(f"return {result}")
     return result
     
     
 def get_user_hobby(sc, user_id):
     # 用户的喜好来自于他听歌排行的普适标签
     
+    print(f"\n进入get_user_hobby {user_id}...")
     # 获取用户听歌排排行列表
     user_rank = get_user_rank(sc, user_id)
     
@@ -129,6 +147,9 @@ def get_user_hobby(sc, user_id):
     # print(hobby_list)
     # print(hobby_dic)
     
+    print(f"\n退出get_user_hobby {user_id}...")
+    print(res_hobby)
+    
     return res_hobby
     
 
@@ -137,6 +158,8 @@ def get_user_detail(sc, user_id):
     # TODO
     # return ["男", 18, "重庆市", 0.8]
 
+    print(f"\n进入get_user_detail{user_id}...")
+    
     filepath = "hdfs://stu:9000/emo_data/info/user_info.txt"
 
     # 获取性别、年龄、地区、emo
@@ -147,14 +170,20 @@ def get_user_detail(sc, user_id):
                 .collect()
     
     if result == []:
+        print(f"\n退出get_user_detail{user_id}...")
+        print("return []")
         return []
     else:
+        print(f"\n退出get_user_detail{user_id}...")
+        print(f"return {result[0]}")
         return result[0]
     
 
 
 def get_user_profile(sc, user_id):
     # 分析单个用户的用户画像
+    print(f"\n开始get_user_profile {user_id}...")
+    
     hobby = get_user_hobby(sc, user_id)
     detail = get_user_detail(sc, user_id)
     
@@ -180,6 +209,9 @@ def get_user_profile(sc, user_id):
     
     # print(user_profile)
     
+    print(f"\n退出get_user_profile {user_id}...")
+    print(f"return {user_profile}")
+    
     return user_profile 
 
 
@@ -187,6 +219,8 @@ def get_related_users(sc, song_id):
     # 在该歌曲下评论的用户群体
     # TODO
     # return ["111", "123", "321"]
+    
+    print(f"\n进入get_related_users{song_id}...")
 
     filepath = f"hdfs://stu:9000/basic_data/song_comments/song_{song_id}.txt"
 
@@ -199,11 +233,16 @@ def get_related_users(sc, song_id):
                 .map(lambda list: list[0])\
                 .collect()
     
+    print(f"\n退出get_related_users{song_id}...")
+    print(f"return {result}")
+    
     return result
 
 
 def get_song_profile(sc, song_id, isDic = True):
     # 对各听众用户画像进行汇总[字典统计]，找出较为普适的用户画像作为本歌的用户画像
+    
+    print(f"\n进入get_song_profile {song_id}, isDic = {isDic}...")
     
     # 获取相关用户群体
     users = get_related_users(sc, song_id)
@@ -228,6 +267,9 @@ def get_song_profile(sc, song_id, isDic = True):
         
         # print(res_profile)
         
+        print(f"\n退出get_song_profile {song_id}, isDic = {isDic}...")
+        print(f"return {res_profile}...")
+        
         return res_profile  # dic
     
     else:
@@ -240,6 +282,8 @@ def get_song_profile(sc, song_id, isDic = True):
 
 def refilter_with_profile(sc, song_id):
     # 根据歌曲听众群体画像对初筛结果做最后一次筛选，并推荐得分较高的Top n首歌
+    
+    print(f"\n进入refilter_with_profile {song_id}...")
     
     # ========初筛========
     # 获取原歌曲
@@ -270,13 +314,36 @@ def refilter_with_profile(sc, song_id):
     # 生成最终的推荐歌曲
     final_list = candidate_list[:10]
     
-    print(final_list)
+    print(f"\n退出refilter_with_profile {song_id}...")
+    print(f"return{final_list}...")
+    
+    # 写入文件
+    filename = "data/rec/rec_" + song_id
+    # 目录不存在时创建目录
+    if not os.path.exists("data/rec/"):    
+        os.mkdir("data/rec/")
+    with open(filename,'w',encoding="utf-8") as file:
+        # format: [ ["123", "a", 0.7, {"华语", "伤感"} ] * 10 ]
+        final_list = [ [song[0],song[1],str(song[2])," ".join(song[3])] for song in final_list ]
+        for song in final_list:
+            file.write(" @#$#@ ".join(song) + "\n")
     
     return final_list       
+
+def get_playlist_songs(playlist_id):
+    # 获取该歌单列表下的所有歌曲id
+    # TODO
+    return ["123","321","111"]
     
-def entry(sc, song_id):
+def entry(sc):
     # 入口函数,便于调用
-    return refilter_with_profile(sc, song_id)
+    for playlist in Music_charts:
+        playlist_id = str(Music_charts[playlist])
+        songs = get_playlist_songs(playlist_id)
+        for song_id in songs:
+            refilter_with_profile(sc,song_id)
+    print("************successfully exit************")
+    
 
 if __name__ == "__main__":
     # # 获取原歌曲
@@ -288,6 +355,6 @@ if __name__ == "__main__":
     conf = SparkConf().setMaster("spark://stu:7077").setAppName("job1")
     sc = SparkContext(conf=conf)
     
-    entry(sc, "2061626302")
+    entry(sc)
 
     sc.stop()

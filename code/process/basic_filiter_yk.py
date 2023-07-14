@@ -174,9 +174,9 @@ if __name__ == '__main__':
     # playlist_files = client.listdir('/data/playlist_comments/')
     # playlist_paths = ['/basic_data/playlist_comments/' + file for file in playlist_files]
     # playlist_rdds = [sc.textFile('hdfs://stu:9000/data/playlist_comments/' + file) for file in playlist_files]
-    
-    song_files = client.listdir('/data/song_comments/')[943:]
-    song_paths = ['/basic_data/song_comments/' + file for file in song_files][943:]
+
+    song_files = client.listdir('/data/song_comments/')
+    song_paths = ['/basic_data/song_comments/' + file for file in song_files]
     # song_rdds = [sc.textFile('hdfs://stu:9000/data/song_comments/' + file) for file in song_files]
 
     # total_length1 = len(playlist_rdds)
@@ -185,25 +185,25 @@ if __name__ == '__main__':
     # for rdd, filepath in tqdm(zip(playlist_rdds, playlist_paths), total= total_length1, desc='歌单评论处理进度'):
     #     comment_filter(client, rdd, filepath)
     
-    # total_length2 = len(song_files)
+    total_length2 = len(song_files)
+   
+    # 清洗歌曲评论文件
+    for file, filepath in tqdm(zip(song_files, song_paths), total= total_length2, desc='歌曲评论处理进度'):
+        rdd = sc.textFile('hdfs://stu:9000/data/song_comments/' + file)
+        comment_filter(client, rdd, filepath)
     
-    # # 清洗歌曲评论文件
-    # for file, filepath in tqdm(zip(song_files, song_paths), total= total_length2, desc='歌曲评论处理进度'):
-    #     rdd = sc.textFile('hdfs://stu:9000/data/song_comments/' + file)
-    #     comment_filter(client, rdd, filepath)
-    
 
-    batch_size = 100  # 每批处理的文件数量
-    num_batches = len(song_files) // batch_size
+    # batch_size = 100  # 每批处理的文件数量
+    # num_batches = len(song_files) // batch_size
 
-    for i in range(num_batches):
-        batch_files = song_files[i * batch_size: (i + 1) * batch_size]
-        batch_paths = song_paths[i * batch_size: (i + 1) * batch_size]
-        process_files(client, batch_files, batch_paths)
+    # for i in range(num_batches):
+    #     batch_files = song_files[i * batch_size: (i + 1) * batch_size]
+    #     batch_paths = song_paths[i * batch_size: (i + 1) * batch_size]
+    #     process_files(client, batch_files, batch_paths)
 
-    remaining_files = song_files[num_batches * batch_size:]
-    remaining_paths = song_paths[num_batches * batch_size:]
-    process_files(client, remaining_files, remaining_paths)
+    # remaining_files = song_files[num_batches * batch_size:]
+    # remaining_paths = song_paths[num_batches * batch_size:]
+    # process_files(client, remaining_files, remaining_paths)
 
     sc.stop()
 

@@ -292,7 +292,7 @@ def refilter_with_profile(sc, song_id):
     candidate_list = filter_with_tag(sc, target_song)
     
     # ========再筛========
-    # 获取本歌听众的群体用户画像
+    # 获取本歌听众的群体用户画像[dic]
     profile_dic = get_song_profile(sc, song_id)
     
     # 对初筛结果打分

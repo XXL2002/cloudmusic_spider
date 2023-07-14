@@ -330,11 +330,21 @@ def refilter_with_profile(sc, song_id):
     
     return final_list       
 
-def get_playlist_songs(playlist_id):
+def get_playlist_songs(sc, playlist_id):
     # 获取该歌单列表下的所有歌曲id
     # TODO
-    return ["123","321","111"]
+    # return ["123","321","111"]
     
+    filepath = 'hdfs://stu:9000/basic_data/info/playlist_info.txt'  # 歌单信息文件
+    tmp = sc.textFile(filepath) \
+            .map(lambda line: line.split(' @#$#@ ')) \
+            .filter(lambda list: list[0] == playlist_id) \
+            .collect()[0][8]
+    
+    result = tmp.split(' ')     # 转换为字符串列表
+    return result    
+
+
 def entry(sc):
     # 入口函数,便于调用
     for playlist in Music_charts:

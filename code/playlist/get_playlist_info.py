@@ -6,7 +6,7 @@ from tools.file import save_csv
 from tools.request import get
 from tools.utils import list2str
 
-def get_playlist_info(playlistid):
+def get_playlist_info(playlistid, total):
     '''
         获取指定歌单的基本信息
     '''
@@ -32,25 +32,42 @@ def get_playlist_info(playlistid):
     data['subscribedCount'] = content_json['playlist']['subscribedCount']
     
     # 歌单描述
-    data['description'] = content_json['playlist']['description'].replace("\n", "")
-
+    if content_json['playlist']['description'] != None:
+        data['description'] = content_json['playlist']['description'].replace("\n", "")
+    else:
+        data['description'] = 'null'
+        
     # 歌单标签
-    data['tags'] = content_json['playlist']['tags']
+    if content_json['playlist']['tags'] != []:
+        data['tags'] = ' '.join(content_json['playlist']['tags'])
+    else:
+        data['tags'] = 'null'
+
     
+
     # 创建者ID
     data['creator'] = content_json['playlist']['creator']['userId']
     
     # 歌曲id列表
     ids = [track['id'] for track in content_json['playlist']['trackIds']]
-    ids = ids[0:10] if len(ids)>=10 else ids
+
+    # 歌单收录音乐的数量
+    data['song_num'] = len(ids)
+
+    # 只记录前十首歌
+    ids = ids[:10] if len(ids)>=10 else ids
     data['trackIds'] = list2str(ids)
+
+
+    # 评论数
+    data['total'] = total
 
     save_csv(file_info_paths['playlist'], data)
     
-    return ids
-        
+    return ids    # 只分析前十首歌
+    
 
 
 if __name__ == "__main__":
 
-    get_playlist_info(19723756)    # 获取指定歌单的基本信息
+    get_playlist_info(60198)    # 获取指定歌单的基本信息

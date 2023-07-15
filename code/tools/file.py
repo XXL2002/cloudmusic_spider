@@ -11,7 +11,10 @@ def json2str(data):
 # 向指定文件添加文件头
 def add_header(filepath, header):
     with open(filepath, 'a', encoding='utf-8') as file:
+        # file.seek(0)  # 定位到文件起始位置
+        # file.truncate()     # 清空文件内容
         file.write(','.join([str(i) for i in header]) + "\n")
+    
     file.close()
     return
 
@@ -30,19 +33,27 @@ def cleardir(path):
         shutil.rmtree(path)
     os.mkdir(path) 
 
-
-def create_xlsx(path, header):
-
-    # 创建工作簿
-    workbook = openpyxl.Workbook()
-
-    # 获取表
-    sheet = workbook.active
-
-    # 设置表头
-    sheet.append(header)
     
-    # 保存文件
-    workbook.save(path)
 
-    return sheet
+
+# def create_xlsx(path, header):
+
+#     # 创建工作簿
+#     workbook = openpyxl.Workbook()
+
+#     # 获取表
+#     sheet = workbook.active
+
+#     # 设置表头
+#     # sheet.append(header)
+    
+#     # 保存文件
+#     workbook.save(path)
+
+#     return sheet
+
+
+if __name__=="__main__":
+    
+    path = r'data\info'
+    cleardir(path)

@@ -22,11 +22,15 @@ def user_age(given_timestamp):
 
 
 # 将时间戳(ms)转换为日期与时间
-# def timestamp2date(timestamp):
-#     str = str(datetime.datetime.fromtimestamp(timestamp / 1000).strftime("%Y-%m-%d %H:%M:%S"))
-#     date, time = str.split(" ")
+def timestamp2date(timestamp):
+    s = str(datetime.datetime.fromtimestamp(timestamp / 1000).strftime("%Y-%m-%d %H:%M:%S"))
+    date, time = s.split(" ")
 
-#     return date, time
+    return date, time
+
+if __name__=="__main__":
+    date, time = timestamp2date(1599015359162)
+    print(date, time)
 
 
 

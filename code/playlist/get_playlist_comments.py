@@ -4,6 +4,7 @@ import sys
 sys.path.append("code")
 
 import math
+import os
 from tools.request import get
 from tools.comment import hotcomments, comments
 from tools.sleep import sleep
@@ -18,7 +19,10 @@ def get_playlist_comments(playlistid):
     filename = f"playlist_{playlistid}"
     filepath = f"data/playlist_comments/{filename}.txt"
 
-    add_header(filepath, file_headers['comment'])
+    if os.path.exists(filepath):
+        return [], 'null'
+    
+    # add_header(filepath, file_headers['comment'])
 
     print(f'\t开始爬取歌单评论!==>{filename}')
 
@@ -30,7 +34,7 @@ def get_playlist_comments(playlistid):
     content_json = get(url)
     
     if content_json is None:
-        return []
+        return [], 'null'
 
     # 评论总数
     total = content_json['total']
@@ -41,6 +45,7 @@ def get_playlist_comments(playlistid):
     print("\t总共有{}页{}条评论\n".format(pages, total))
 
     users = []
+    # double check
     users += hotcomments(content_json, filepath)
     users += comments(content_json, filepath)
 
@@ -57,15 +62,18 @@ def get_playlist_comments(playlistid):
         content_json = get(url)
 
         # 从第二页开始获取评论
+        # double check
         users += comments(content_json, filepath)
         page += 1
         
+
         if ((page+1) % 5 == 0 or page ==min(pages,size)-1):
             progress_bar(page+1,min(pages,size))
+
         sleep()
     
-    print("爬取结束!")
-    return users
+    print("爬取playlist评论结束...")
+    return users, total
 
 
 

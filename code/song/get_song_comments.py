@@ -3,12 +3,14 @@ import sys
 sys.path.append("code")
 
 import math
+import os
 from tools.request import get
 from tools.comment import hotcomments, comments
 from tools.sleep import sleep
 from tools.progressBar import progress_bar
 from tools.file import add_header
 from tools.struct import file_headers
+
 
 
 def get_song_comments(songid):
@@ -18,8 +20,11 @@ def get_song_comments(songid):
 
     filename = f"song_{songid}"
     filepath = f"data/song_comments/{filename}.txt"
-    
-    add_header(filepath, file_headers['comment'])
+
+    if os.path.exists(filepath):
+        return [], 'null'
+
+    # add_header(filepath, file_headers['comment'])
 
     print(f'\t\t开始爬取单曲评论!==>{filename}')
 
@@ -31,7 +36,7 @@ def get_song_comments(songid):
     content_json = get(url)
     
     if content_json is None:
-        return []
+        return [], 'null'
     
     # 评论总数
     total = content_json['total']
@@ -42,14 +47,15 @@ def get_song_comments(songid):
     print("\t\t总共有{}页{}条评论\n".format(pages, total))
 
     users = []
-    users += hotcomments(content_json, filepath)
-    users += comments(content_json, filepath)
+    # double check
+    users += hotcomments(content_json, filepath) if content_json is not None else []
+    users += comments(content_json, filepath) if content_json is not None else []
 
     # 开始获取歌曲的全部评论
     page = 1
 
     # 取size个页
-    size = 10
+    size = 20
     while page < pages and page < size:
         if(page == 1):
             progress_bar(page,min(pages,size))
@@ -58,15 +64,18 @@ def get_song_comments(songid):
         content_json = get(url)
 
         # 从第二页开始获取评论
-        users += comments(content_json, filepath)
+        # double check
+        users += comments(content_json, filepath) if content_json is not None else []
         page += 1
+
 
         if ((page+1) % 5 == 0 or page ==min(pages,size)-1):
             progress_bar(page+1,min(pages,size))
+
         sleep()
     
-    print("爬取结束!")
-    return users
+    print("爬取song评论结束...")
+    return users, total
 
 
 

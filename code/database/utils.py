@@ -1,5 +1,5 @@
 
-# 查看某个表
+# 查看指定表
 def showTable(connection, table_name):
     
     cursor = connection.cursor()

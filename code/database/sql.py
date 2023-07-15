@@ -402,38 +402,7 @@ def songSex(sc, client, dir, filepath1, filepath2, connection):
     cursor.close()
 
 
-# # songAge辅助函数
-# def countAge(user_info_rdd, user_id_list):
-#     '''
-#         user_info_rdd: user_info.txt对应rdd
-#         user_id_list: 这首歌的所有用户id
-#     '''
-
-#     age_emo_num_list = user_info_rdd.map(lambda line: line.split(" @#$#@ ")) \
-#                                     .filter(lambda list: list[0] in user_id_list and list[3] != 'null') \
-#                                     .map(lambda x: (int(x[3]) // 10, (float(x[11]), 1))) \
-#                                     .reduceByKey(lambda a, b: (a[0] + b[0], a[1] + b[1])) \
-#                                     .mapValues(lambda total_count: (total_count[0] / total_count[1], total_count[1])) \
-#                                     .map(lambda x: (age_dict[x[0]], x[1][0], x[1][1])) \
-#                                     .sortBy(lambda x: x[0]) \
-#                                     .collect()
-#     if age_emo_num_list == []:
-#        return []
-    
-#     age_list, emo_list, num_list = [], [], []
-#     for item in age_emo_num_list:
-#         age_list.append(item[0])
-#         emo_list.append(str(item[1]))
-#         num_list.append(str(item[2]))
-    
-#     age = ' '.join(age_list)
-#     emo = ' '.join(emo_list)
-#     num = ' '.join(num_list)
-
-#     return (age, emo, num)
-
-
-# 20(已验证) 歌曲用户年龄分布表songAge(歌曲id sid, 歌曲名 sname, 年龄段 age 年龄段emo指数 emo, 年龄段用户数 num) 
+# 20(已存入) 歌曲用户年龄分布表songAge(歌曲id sid, 歌曲名 sname, 年龄段 age 年龄段emo指数 emo, 年龄段用户数 num) 
 def songAge(sc, client, dir, filepath1, filepath2, connection):
     '''
         dir: /basic_data/song_comments/
@@ -561,26 +530,46 @@ def songRegion(sc, dir, filepath, connection):   # 插入数据到表songRegion
 # songInfo辅助函数
 def get_recSongs(songid):
 
-    filepath = f'/rec_data/rec_{songid}'
-    with open(filepath, 'r', encoding='uft-8') as file:
-        line_list = file.read().split('\n')
-    result = ' @#$#@ '.join([line.split(' @#$#@ ')[1] for line in line_list])
+    client = HdfsClient(hosts='stu:50070', user_name='root')
 
-    return result
+    filepath = f'/rec_data/rec_{songid}.txt'
+
+    if client.exists(filepath):     # 存在对应的推荐歌曲信息
+        file = client.open(filepath)
+        line_list = file.read().decode().split('\n')
+        tmp_list = [line.split(' @#$#@ ') for line in line_list]
+        tmp_list = [item[1] for item in tmp_list if len(item) >= 2]
+        return ' @#$#@ '.join(tmp_list)
+    else:
+        return ''
 
 
 # 24(未验证) 歌曲信息推荐表songInfo(歌曲id sid, 歌曲名 sname, 歌曲风格标签 style, 推荐歌曲 re)
-def songInfo(sc, filepath):
+def songInfo(sc, filepath1, filepath2):
     ''' 
-        filepath: basic_data/song_info.txt
+        filepath1: basic_data/song_info.txt
+        filepath2: basic_data/playlist_info.txt
     '''
 
     cursor = connection.cursor(cursor = pymysql.cursors.DictCursor)
 
-    result = sc.textFile(filepath) \
+    # 获取所有排行榜上的歌曲
+    playlist_songs_list = sc.textFile(filepath2) \
+                            .map(lambda line: line.split(' @#$#@ ')) \
+                            .flatMap(lambda list: list[8].split(' ')) \
+                            .collect()
+    
+    playlist_songs_list = set(playlist_songs_list)
+    
+    # print(len(playlist_songs_list))
+
+    result = sc.textFile(filepath1) \
                 .map(lambda line: line.split(' @#$#@ ')) \
-                .map(lambda list: (list[0], list[1], ' @#$#@ '.join(list[7].split(' ')), get_recSongs(list[0]))) \
+                .filter(lambda list: list[0] in playlist_songs_list) \
+                .map(lambda list: (list[0], list[1], ' @#$#@ '.join(list[7].split(' ')) if list[7] != 'null' else '', get_recSongs(list[0]))) \
                 .collect()
+
+    # print(result)
 
     sql = "INSERT INTO songInfo (sid, sname, style, re) VALUES (%s, %s, %s, %s)"
 
@@ -915,7 +904,7 @@ if __name__=='__main__':
                                 charset='utf8')
     
 
-    table_name = 'songAge'
+    table_name = 'songInfo'
     
     showTable(connection, table_name)
     deleteAll(connection, table_name)
@@ -940,8 +929,9 @@ if __name__=='__main__':
     # listEmo(sc, filepath_emo_song, filepath_emo_playlist, connection)
     # listStyle(sc, filepath_song, filepath_playlist, connection)
     # songSex(sc, client, song_comments_dir, filepath_song, filepath_user, connection)
-    songAge(sc, client, song_comments_dir, filepath_song, filepath_emo_user, connection)
+    # songAge(sc, client, song_comments_dir, filepath_song, filepath_emo_user, connection)
     # songRegion(sc, song_comments_dir, filepath_song, connection)
+    songInfo(sc, filepath_song, filepath_playlist)
     # singerAllNum(sc, filepath_singer, filepath_song, connection)
     # singerEmo(filepath_singer, filepath_emo_song, connection)
     # singerSong(sc, filepath_song, filepath_singer, connection)

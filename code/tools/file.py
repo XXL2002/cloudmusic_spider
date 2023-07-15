@@ -33,11 +33,6 @@ def cleardir(path):
         shutil.rmtree(path)
     os.mkdir(path) 
 
-# 清空非空目录
-def cleardir(path):
-    if os.path.exists(path):    # 目录已存在
-        shutil.rmtree(path)
-    os.mkdir(path)
     
 
 
@@ -59,6 +54,6 @@ def cleardir(path):
 
 
 if __name__=="__main__":
-
+    
     path = r'data\info'
-    rmdir(path)
+    cleardir(path)

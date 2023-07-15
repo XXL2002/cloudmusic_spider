@@ -62,6 +62,8 @@ def new_dir(client, new_data_path):
 # 对用户个人简介分词
 def signature_cut(client, rdd, filepath):
 
+    print('开始个人简介分词')
+
     tmp_list = rdd.map(lambda line: line.split(' @#$#@ ')) \
                 .map(lambda list: [list[i] if i != 5 else depart(list[i]) for i in range(len(list))]) \
                 .map(lambda list: ' @#$#@ '.join(list)) \
@@ -70,11 +72,15 @@ def signature_cut(client, rdd, filepath):
     str = '\n'.join(tmp_list).encode()
 
     client.create(filepath, data=str)
+
+    print('个人简介分词结束\n')
     
 
 # 对歌曲歌词进行分词
 def lyric_cut(client, rdd, filepath):
 
+    print('开始歌词分词')
+
     tmp_list = rdd.map(lambda line: line.split(' @#$#@ ')) \
                 .map(lambda list: [list[i] if i != 5 else depart(list[i]) for i in range(len(list))]) \
                 .map(lambda list: ' @#$#@ '.join(list)) \
@@ -83,7 +89,8 @@ def lyric_cut(client, rdd, filepath):
     str = '\n'.join(tmp_list).encode()
 
     client.create(filepath, data=str)
-
+    
+    print('歌词分词结束\n')
 
 # 对评论内容进行分词
 # def comment_cut(client, rdd, filepath):
@@ -160,11 +167,15 @@ if __name__ == '__main__':
     # for rdd, filepath in zip(song_rdds, song_paths):
     #     comment_cut(rdd, filepath)
 
+    print('开始评论分词')
+
     file_list1 = sc.wholeTextFiles(r'hdfs://stu:9000/basic_data/playlist_comments')
     file_list2 = sc.wholeTextFiles(r'hdfs://stu:9000/basic_data/song_comments/')
     combined_list = file_list1.union(file_list2)
     
     combined_list.foreach(comment_cut)
+
+    print('评论分词结束\n')
 
     sc.stop()
 

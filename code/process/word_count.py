@@ -2,14 +2,14 @@
 
 import sys
 sys.path.append('code')
-
+sys.path.append("/root/anaconda3/lib/python3.6/site-packages")
 import re
 import pymysql
 from collections import Counter
 from pyspark import SparkConf, SparkContext
 from pyhdfs import HdfsClient
-from tools.struct import Music_charts
-from database.utils import showTable, selectAll, deleteAll
+# from tools.struct import Music_charts
+# from database.utils import showTable, selectAll, deleteAll
 
 
 # 提取评论中的地区信息和单词
@@ -30,8 +30,8 @@ def province_word_count(sc, connection):
     
     print('地区评论词频统计开始')
 
-    playlist_comments_rdd = sc.textFile("hdfs://stu:9000/cut_data/playlist_comments/*.txt")
-    song_comments_rdd = sc.textFile("hdfs://stu:9000/cut_data/song_comments/*.txt")
+    playlist_comments_rdd = sc.textFile("hdfs://fwt:9000/cut_data/playlist_comments/*.txt")
+    song_comments_rdd = sc.textFile("hdfs://fwt:9000/cut_data/song_comments/*.txt")
     
     # 合并两个rdd
     rdd = playlist_comments_rdd.union(song_comments_rdd)
@@ -74,12 +74,12 @@ def playlist_word_count(sc, client, connection, Music_charts):
     playlist_files = client.listdir('/cut_data/playlist_comments/')
 
     # 歌单rdd列表
-    playlist_rdds = [sc.textFile(f'hdfs://stu:9000/cut_data/playlist_comments/{file}') for file in playlist_files]
+    playlist_rdds = [sc.textFile(f'hdfs://fwt:9000/cut_data/playlist_comments/{file}') for file in playlist_files]
 
     result = []
     for i in range(len(playlist_rdds)):
 
-        word_list = playlist_rdds[0].map(lambda line: line.split(' @#$#@ ')) \
+        word_list = playlist_rdds[i].map(lambda line: line.split(' @#$#@ ')) \
                                     .filter(lambda list: len(list) == 6) \
                                     .flatMap(lambda list: list[3].split(' ')) \
                                     .map(lambda x: (x, 1)) \
@@ -109,8 +109,9 @@ def count_lyric(str_word):
 
     word_list = str_word.split(' ')     # 词汇列表
     word_count_dict = Counter(item for item in word_list if item != '')
-    keys = ' @#$#@ '.join([str(key) for key in word_count_dict.keys()])
-    values = ' @#$#@ '.join([str(value) for value in word_count_dict.values()])
+    tmp_list = sorted(word_count_dict.items(), key=lambda x: -x[1])
+    keys = ' @#$#@ '.join([item[0] for item in tmp_list])
+    values = ' @#$#@ '.join([str(item[1]) for item in tmp_list])
 
     return (keys, values)
 
@@ -121,27 +122,31 @@ def song_word_count(sc, connection):
     print('歌曲歌词词频统计开始')
 
     # 过滤列数不为8、歌词为空的歌曲
-    result = sc.textFile('hdfs://stu:9000/cut_data/info/song_info.txt') \
+    result = sc.textFile('hdfs://fwt:9000/cut_data/info/song_info.txt') \
                 .map(lambda line: line.split(' @#$#@ ')) \
+                .map(lambda x: (x[0], x)) \
+                .reduceByKey(lambda x, y: x) \
+                .map(lambda x: x[1]) \
                 .filter(lambda list: len(list) == 8) \
-                .map(lambda x:(x[0], x)) \
-                .reduceByKey(lambda x,y:x) \
                 .map(lambda list: [list[0], list[1], count_lyric(list[5])]) \
                 .map(lambda x: (x[0], x[1], x[2][0], x[2][1])) \
                 .collect()
     
-    print(result)
+    # print(result)
     cursor = connection.cursor()
     
-    showTable(connection, 'songWord')
-    deleteAll(connection, 'songWord')
-    
+    # showTable(connection, 'songWord')
+    # deleteAll(connection, 'songWord')
+    sql = f"delete from songWord"
+    cursor.execute(sql)
+    connection.commit()
+
     # 22 歌曲歌词词云表songWord(歌曲id sid, 歌曲名 sname, 歌词词云词语 word, 对应次数 cnt)
     sql = "INSERT INTO songWord (sid, sname, word, cnt) VALUES (%s, %s, %s, %s)"
     cursor.executemany(sql, result)
     connection.commit()
 
-    selectAll(connection, 'songWord')
+    # selectAll(connection, 'songWord')
 
     cursor.close()
 
@@ -153,7 +158,7 @@ def song_comment_wordcount(sc, connection):
 
     print('歌曲评论词频统计开始')
 
-    tmp = sc.textFile('hdfs://stu:9000/cut_data/info/song_info.txt') \
+    tmp = sc.textFile('hdfs://fwt:9000/cut_data/info/song_info.txt') \
                 .map(lambda line: line.split(' @#$#@ ')) \
                 .filter(lambda list: len(list) == 8) \
                 .map(lambda list: (list[0], list[1])) \
@@ -165,36 +170,43 @@ def song_comment_wordcount(sc, connection):
     # 歌曲名列表
     song_files = client.listdir('/cut_data/song_comments/')
 
-    # 歌曲rdd列表
-    song_rdds = [sc.textFile(f'hdfs://stu:9000/cut_data/song_comments/{file}') for file in song_files]
-
+    count = 0
+    length = len(song_files)
     result = []
-    for i in range(len(song_rdds)):
+    for i in range(length):
+        
+        id = re.search(r'\d+', song_files[i]).group(0)
+        if id not in song_id_name_dict:
+            continue
 
-        word_list = song_rdds[0].map(lambda line: line.split(' @#$#@ ')) \
+        song_rdd = sc.textFile(f'hdfs://fwt:9000/cut_data/song_comments/{song_files[i]}')
+
+        word_list = song_rdd.map(lambda line: line.split(' @#$#@ ')) \
                                 .filter(lambda list: len(list) == 6) \
                                 .flatMap(lambda list: list[3].split(' ')) \
                                 .map(lambda x: (x, 1)) \
                                 .reduceByKey(lambda a, b: a + b) \
-                                .sortBy(lambda tuple: tuple[1], ascending=False) \
+                                .sortBy(lambda tuple: tuple[1], ascending=True) \
                                 .collect()
                     
-        id = re.search(r'\d+', song_files[i]).group(0)
         words = ' @#$#@ '.join([word[0] for word in word_list])
         frequence = ' @#$#@ '.join([str(word[1]) for word in word_list])
         result.append((id, song_id_name_dict[id], words, frequence))
+        
+        count += 1
+        print(f'进度:{count}/{length}')
 
     cursor = connection.cursor()
 
-    showTable(connection, 'songCommentWord')
-    deleteAll(connection, 'songCommentWord')
-
+    # showTable(connection, 'songCommentWord')
+    # deleteAll(connection, 'songCommentWord')
+    
     # 23 歌曲评论词云表songCommentWord(歌曲id sid, 歌曲名 sname, 词云词语 word, 出现次数 cnt)
-    sql = "INSERT INTO songCommentWord (sid, sname, word, cnt) VALUES (%s, %s, %s, %s)"
+    sql = "INSERT INTO songCommentWord (sid, sname, cword, ccnt) VALUES (%s, %s, %s, %s)"
     cursor.executemany(sql, result)
     connection.commit()
 
-    selectAll(connection, 'songCommentWord')
+    # selectAll(connection, 'songCommentWord')
 
     cursor.close()
 
@@ -207,14 +219,14 @@ def singer_word_count(sc, connection):
     print('歌手创作歌曲歌词词频统计开始')
 
     # 从歌手信息表中取出歌手id、歌手名、歌手创作歌曲id
-    singer_list = sc.textFile('hdfs://stu:9000/basic_data/info/singer_info.txt') \
+    singer_list = sc.textFile('hdfs://fwt:9000/basic_data/info/singer_info.txt') \
             .map(lambda line: line.split(' @#$#@ ')) \
             .filter(lambda list: len(list) == 5) \
             .map(lambda list: [list[0], list[1], list[4].split(' ')]) \
             .collect()
     
     result = []
-    rdd = sc.textFile('hdfs://stu:9000/cut_data/info/song_info.txt') \
+    rdd = sc.textFile('hdfs://fwt:9000/cut_data/info/song_info.txt') \
             .map(lambda line: line.split(' @#$#@ ')) \
             .filter(lambda list: len(list) == 8)
     
@@ -228,6 +240,9 @@ def singer_word_count(sc, connection):
                         .sortBy(lambda tuple: tuple[1], ascending=False) \
                         .take(10)
 
+        if word_list == [] or word_list[0][1] == 3:
+            continue
+
         words = ' @#$#@ '.join([word[0] for word in word_list])
         frequence = ' @#$#@ '.join([str(word[1]) for word in word_list])
 
@@ -235,15 +250,15 @@ def singer_word_count(sc, connection):
     
     cursor = connection.cursor()
 
-    showTable(connection, 'singerWord')
-    deleteAll(connection, 'singerWord')
+    # showTable(connection, 'singerWord')
+    # deleteAll(connection, 'singerWord')
 
     # 29 歌手歌曲歌词词云表singerWord(歌手id seid, 歌手名 sename, 所有歌词词云词语 word, 出现次数 cnt)
     sql = "INSERT INTO singerWord (seid, sename, word, cnt) VALUES (%s, %s, %s, %s)"
     cursor.executemany(sql, result)
     connection.commit()
 
-    showTable(connection, 'singerWord')
+    # showTable(connection, 'singerWord')
 
     cursor.close()
 
@@ -254,10 +269,10 @@ def singer_word_count(sc, connection):
 
 if __name__ == '__main__':
 
-    conf = SparkConf().setMaster("spark://stu:7077").setAppName("job1")
+    conf = SparkConf().setMaster("spark://fwt:7077").setAppName("job1")
     sc = SparkContext(conf=conf)
 
-    client = HdfsClient(hosts='stu:50070', user_name='root')
+    client = HdfsClient(hosts='fwt:50070', user_name='root')
 
     connection = pymysql.connect(host='762j782l06.zicp.fun',
                                 user='root',
@@ -274,16 +289,13 @@ if __name__ == '__main__':
     # playlist_word_count(sc, client, connection, Music_charts)
 
     # 统计歌曲歌词词云
-    song_word_count(sc, connection)
+    # song_word_count(sc, connection)
     
     # 统计每首歌评论词云
     # song_comment_wordcount(sc, connection)
-
+    
     # 统计歌手创作词云
-    # singer_word_count(sc, connection)
+    singer_word_count(sc, connection)
 
     connection.close()
     sc.stop()
-
-
-

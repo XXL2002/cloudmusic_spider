@@ -61,7 +61,7 @@ def get_user_info(user_id):
     # 累积听歌总数
     data['listenSongs'] = content_json['listenSongs']
 
-    # 获取用户近一周听歌排行(10首)
+    # 获取用户听歌排行(10首)
     print("\t\t正在爬取TA的听歌情况...")
     alldatalist, weeklist = get_user_listen_rank(user_id)
 
